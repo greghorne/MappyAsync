@@ -1,0 +1,2 @@
+class MappyAsyncsController < ApplicationController
+end

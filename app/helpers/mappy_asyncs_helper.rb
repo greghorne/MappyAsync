@@ -1,0 +1,2 @@
+module MappyAsyncsHelper
+end
