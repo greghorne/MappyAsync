@@ -7,7 +7,7 @@ Goal:   Use extensive asynchronous coding wherever possible.
 Comment: I don't think making everything asynchronous is necessarilly the ideal implementation for this app.  However, I look forward to learning much more about asynchronous applications by working on this project.
 
 
-Tech Stack:
+- Tech Stack:
 
     * Rails 5.2.0
     * ruby 2.5.1p57 (2018-03-29 revision 63029) [i686-linux]
