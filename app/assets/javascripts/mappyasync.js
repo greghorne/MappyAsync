@@ -8,15 +8,16 @@ $(document).ready(function() {
 
     map.on('click', function(event) {
         console.log("lat: " + event.latlng.lat + ", lng: " + event.latlng.lng);
-        $.ajax("/mapclick")
+        $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
+              ).done(function(result) {
+                console.log(result) 
+                var popup = L.popup();
+                popup
+                    .setLatLng(event.latlng)
+                    .setContent("Clicked: " + event.latlng.toString())
+                    .openOn(map)
+
+            });
     });
 
-    // map.on('click', function() {
-        // $.ajax("")
-    // });
-
-    // map.on('click', function(event) {
-    //     console.log("lat: " + event.latlng.lat + ", lng: " + event.latlng.lng);
-    // });
-
-});
+})
