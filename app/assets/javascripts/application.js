@@ -12,6 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require_tree .
+//= require rails-ujs
 //= require leaflet
+//= require_tree .
+
 
