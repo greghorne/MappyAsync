@@ -3,4 +3,6 @@ Rails.application.routes.draw do
 
   get "/" => "mappy_asyncs#mappyasync"
 
+  get "/mapclick" => "mappy_asyncs#mapclick"
+
 end

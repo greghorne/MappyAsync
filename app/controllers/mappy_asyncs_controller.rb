@@ -6,4 +6,9 @@ class MappyAsyncsController < ApplicationController
             # render json: return_hash
         end
     end
+
+    def mapclick
+        puts "mapclick..."
+    end
+
 end
