@@ -60,7 +60,7 @@ $(document).ready(function() {
             defaultMarkGeocode: false,
             collapsed: true,
             position: 'bottomright'
-        }).on('markgeocode', function(e) { mapClickity(e.geocode.center) }).addTo(map)
+        }).on('markgeocode', function(e) { mapLatLng(e.geocode.center) }).addTo(map)
     ////////////////////////////////////////////////////////////
 
 
@@ -69,7 +69,7 @@ $(document).ready(function() {
     map.on('click', function(event) {
         $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
               ).success(function() { 
-                mapClickity(event.latlng) 
+                mapLatLng(event.latlng) 
         })
     });
     ////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////
     // handle x,y coordinates from a map click or geocode
-    function mapClickity(latlng) {
+    function mapLatLng(latlng) {
 
         var mapZoom = map.getZoom();
         (mapZoom < 12) ? zoom = 12 : zoom = mapZoom
@@ -93,8 +93,8 @@ $(document).ready(function() {
 
 
 
-    map.on('zoomlevelschange', function(event) {
-        console.log("zoom changed");
+    map.on('zoom', function(event) {
+        console.log("zoom changed ");
         console.log(event);
     });
     
