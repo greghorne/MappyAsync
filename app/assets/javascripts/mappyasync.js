@@ -37,7 +37,7 @@ $(document).ready(function() {
 
 
     ////////////////////////////////////////////////////////////
-    // define layer control and add to map
+    // define base maps and layer control and add to map
     var baseMaps = {
         "Grayscale": grayscale,
         "Esri": esri,
@@ -47,18 +47,15 @@ $(document).ready(function() {
     L.control.layers(baseMaps).addTo(map)
     ////////////////////////////////////////////////////////////
 
+
     ////////////////////////////////////////////////////////////
-    // add geocoder
+    // add geocoder and plot marker
     var marker
-    
     var geocoder = L.Control.geocoder({
-            defaultMarkGeocode: false
-        }).on('markgeocode', function(e) {
-            map.flyTo([e.geocode.center.lat, e.geocode.center.lng], 14)
-            if (marker) map.removeLayer(marker);
-            marker = new L.marker([e.geocode.center.lat, e.geocode.center.lng]) //.addTo(map)
-            map.addLayer(marker);
-    }).addTo(map)
+            defaultMarkGeocode: false,
+            collapsed: true,
+            position: 'bottomright'
+        }).on('markgeocode', function(e) { mapClickity(e.geocode.center) })   //.addTo(map)
     ////////////////////////////////////////////////////////////
     
 
@@ -66,19 +63,23 @@ $(document).ready(function() {
     // add scalebar
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
-    // L.Control.geocoder().addTo(map);
 
+    function mapClickity(latlng) {
+
+        var mapZoom = map.getZoom();
+        alert(mapZoom);
+        (mapZoom < 12) ? zoom = 12 : zoom = mapZoom
+
+        map.flyTo(latlng, zoom)
+        if (marker) map.removeLayer(marker);
+        marker = new L.marker(latlng).addTo(map)
+        map.addLayer(marker);
+    }
 
     map.on('click', function(event) {
-
         $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
-              ).success(function(result) {
-
-                var popup = L.popup();
-                popup
-                    .setLatLng(event.latlng)
-                    .setContent("Clicked: " + event.latlng.toString())
-                    .openOn(map)
+              ).success(function(e) { 
+                mapClickity(event.latlng) 
         });
     });
 
