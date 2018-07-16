@@ -43,8 +43,13 @@ $(document).ready(function() {
         "Esri": esri,
         "OSM": osm
     }
-
     L.control.layers(baseMaps).addTo(map)
+    ////////////////////////////////////////////////////////////
+
+
+    ////////////////////////////////////////////////////////////
+    // add scalebar
+    L.control.scale({imperial: true, metric: false}).addTo(map)
     ////////////////////////////////////////////////////////////
 
 
@@ -55,33 +60,38 @@ $(document).ready(function() {
             defaultMarkGeocode: false,
             collapsed: true,
             position: 'bottomright'
-        }).on('markgeocode', function(e) { mapClickity(e.geocode.center) })   //.addTo(map)
+        }).on('markgeocode', function(e) { mapClickity(e.geocode.center) }).addTo(map)
     ////////////////////////////////////////////////////////////
-    
+
 
     ////////////////////////////////////////////////////////////
-    // add scalebar
-    L.control.scale({imperial: true, metric: false}).addTo(map)
+    // add map click event
+    map.on('click', function(event) {
+        $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
+              ).success(function() { 
+                mapClickity(event.latlng) 
+        })
+    });
+    ////////////////////////////////////////////////////////////
 
 
+    ////////////////////////////////////////////////////////////
+    // handle x,y coordinates from a map click or geocode
     function mapClickity(latlng) {
 
         var mapZoom = map.getZoom();
-        alert(mapZoom);
         (mapZoom < 12) ? zoom = 12 : zoom = mapZoom
 
         map.flyTo(latlng, zoom)
+
         if (marker) map.removeLayer(marker);
-        marker = new L.marker(latlng).addTo(map)
+        marker = new L.marker(latlng)
         map.addLayer(marker);
     }
+    ////////////////////////////////////////////////////////////
 
-    map.on('click', function(event) {
-        $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
-              ).success(function(e) { 
-                mapClickity(event.latlng) 
-        });
-    });
+
+
 
     map.on('zoomlevelschange', function(event) {
         console.log("zoom changed");
