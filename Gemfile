@@ -29,7 +29,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'thin'
 gem 'pg'
 gem 'json'
-gem 'leaflet-rails'
+# gem 'leaflet-rails'
 gem 'jquery-rails'
 
 # gem 'jquery-rails'
