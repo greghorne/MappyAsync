@@ -94,7 +94,7 @@ $(document).ready(function() {
 
 
     map.on('zoom', function(event) {
-        console.log("zoom changed ");
+        console.log("zoom changed " + event);
         console.log(event);
     });
     
