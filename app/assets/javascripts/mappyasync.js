@@ -1,12 +1,16 @@
-// $( document ).on('turbolinks:load', function() {
+// $(document).on('turbolinks:load', function() {
 //     console.log("It works on each visit!")
-//   })
+// })
 
 
-
+////////////////////////////////////////////////////////////
+// prepare indexedDB 
+////////////////////////////////////////////////////////////
 var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
 
-var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+
+// prefixes of window.IDB objects
 window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
  
@@ -15,13 +19,11 @@ var openedDB = indexedDB.open("MappyAsync", 1);
 openedDB.onupgradeneeded = function() {
     var db = openedDB.result;
     var store = db.createObjectStore("LocationStore", {keyPath: "id", autoIncrement: true});
-    // var index =store.createIndex("CoordinateIndex", ["location.lat", "location.lng"]);
 }
+////////////////////////////////////////////////////////////
+
 
 $(document).ready(function() {
-
-
-    
 
     ////////////////////////////////////////////////////////////
     // define base map layer
@@ -79,7 +81,10 @@ $(document).ready(function() {
             defaultMarkGeocode: false,
             collapsed: true,
             position: 'bottomright'
-        }).on('markgeocode', function(e) { mapDoLatLng(e.geocode.center) }).addTo(map)
+        }).on('markgeocode', function(e) { 
+            console.log(e)
+            mapDoLatLng(e.geocode.center, e.geocode.name) 
+        }).addTo(map)
     ////////////////////////////////////////////////////////////
 
 
@@ -88,7 +93,7 @@ $(document).ready(function() {
     map.on('click', function(event) {
         $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
               ).success(function() { 
-                mapDoLatLng(event.latlng) 
+                mapDoLatLng(event.latlng, "clicked location") 
         })
     });
     ////////////////////////////////////////////////////////////
@@ -96,7 +101,7 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////
     // handle x,y coordinates from a map click or geocode
-    function mapDoLatLng(latlng) {
+    function mapDoLatLng(latlng, name) {
 
         var mapZoom = map.getZoom();
         (mapZoom < 12) ? zoom = 12 : zoom = mapZoom
@@ -106,29 +111,21 @@ $(document).ready(function() {
         if (marker) map.removeLayer(marker);
         marker = new L.marker(latlng, { draggable: true, autopan: true })
         map.addLayer(marker);
+        marker.bindPopup(name)
 
         // open indexedDB and add lat,lng
         var db = openedDB.result;
         var tx = db.transaction(["LocationStore"], "readwrite");
         var store = tx.objectStore("LocationStore", {keyPath: "id", autoincement: true});
-    
-        store.put({location: {lat: latlng.lat, lng:latlng.lng}})
+    console.log(name);
+        store.put({name: name, location: {lat: latlng.lat, lng:latlng.lng}})
     }
     ////////////////////////////////////////////////////////////
-
-
-
-
-
-
 
     map.on('zoomend', function(event) {
         // console.log("zoom changed " + event);
         // console.log(event);
         // console.log(event.sourceTarget['anitmatetozoom']);
     });
-
-
-    
 })
 
