@@ -2,26 +2,62 @@
 //     console.log("It works on each visit!")
 //   })
 
+
 $(document).ready(function() {
+
+    var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
+    deleteIndexedDB.onsuccess = function(e) {
+        console.log("db deleted...")
+    }
+
+    deleteIndexedDB.onerror = function(e) {
+        console.log("db not found...")
+    }
+
+
+
+    var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
+     
+    var openedDB = indexedDB.open("MappyAsync", 1);
+    
+    openedDB.onupgradeneeded = function() {
+        var db = openedDB.result;
+        var store = db.createObjectStore("MyObjectStore", {keyPath: "id", autoIncrement: true});
+        // var index =store.createIndex("CoordinateIndex", ["location.lat", "location.lng"]);
+    }
+    
+    openedDB.onsuccess = function() {
+        // var db = openedDB.result;
+        // var tx = db.transaction(["MyObjectStore"], "readwrite");
+        // var store = tx.objectStore("MyObjectStore");
+        // var index = store.index("CoordinateIndex");
+    
+        // store.put({id: Date().toString(), location: {lat: 36, lng: -97}})
+    }
+
+
+
 
     ////////////////////////////////////////////////////////////
     // define base map layer
     var grayscale = L.tileLayer("http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png", {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoon: 4,
-        maxZoom: 16
+        minZoon: 6,
+        maxZoom: 15
     });
 
     var esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}, detectRetina=true', {
         attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
-        minZoom: 4,
-        maxZoom: 16
+        minZoom: 6,
+        maxZoom: 15
     });
 
     var osm = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoom: 4,
-        maxZoom: 18
+        minZoom: 6,
+        maxZoom: 15
     });
     ////////////////////////////////////////////////////////////
 
@@ -87,6 +123,21 @@ $(document).ready(function() {
         if (marker) map.removeLayer(marker);
         marker = new L.marker(latlng, { draggable: true, autopan: true })
         map.addLayer(marker);
+
+        // check indexedDB support
+        var db = openedDB.result;
+        var tx = db.transaction(["MyObjectStore"], "readwrite");
+        var store = tx.objectStore("MyObjectStore", {keyPath: "id", autoincement: true});
+        // var index = store.index("CoordinateIndex");
+    
+        store.put({location: {lat: latlng.lat, lng:latlng.lng}})
+
+        // tx.oncomplete = function() {
+        //     db.close();
+        //     alert("db closed")
+        // }
+
+
     }
     ////////////////////////////////////////////////////////////
 
@@ -94,9 +145,11 @@ $(document).ready(function() {
 
 
 
+
+
     map.on('zoomend', function(event) {
         // console.log("zoom changed " + event);
-        console.log(event);
+        // console.log(event);
         // console.log(event.sourceTarget['anitmatetozoom']);
     });
 
