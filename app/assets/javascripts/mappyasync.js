@@ -5,15 +5,6 @@
 
 
 var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
-deleteIndexedDB.onsuccess = function(e) {
-    console.log("db deleted...")
-}
-
-// deleteIndexedDB.onerror = function(e) {
-//     console.log("indexedDB does")
-// }
-
-
 
 var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
@@ -23,7 +14,7 @@ var openedDB = indexedDB.open("MappyAsync", 1);
 
 openedDB.onupgradeneeded = function() {
     var db = openedDB.result;
-    var store = db.createObjectStore("MyObjectStore", {keyPath: "id", autoIncrement: true});
+    var store = db.createObjectStore("LocationStore", {keyPath: "id", autoIncrement: true});
     // var index =store.createIndex("CoordinateIndex", ["location.lat", "location.lng"]);
 }
 
@@ -118,8 +109,8 @@ $(document).ready(function() {
 
         // open indexedDB and add lat,lng
         var db = openedDB.result;
-        var tx = db.transaction(["MyObjectStore"], "readwrite");
-        var store = tx.objectStore("MyObjectStore", {keyPath: "id", autoincement: true});
+        var tx = db.transaction(["LocationStore"], "readwrite");
+        var store = tx.objectStore("LocationStore", {keyPath: "id", autoincement: true});
     
         store.put({location: {lat: latlng.lat, lng:latlng.lng}})
     }
