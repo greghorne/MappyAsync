@@ -20,7 +20,7 @@ $(document).ready(function() {
 
     var osm = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoom: 2,
+        minZoom: 4,
         maxZoom: 18
     });
     ////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ $(document).ready(function() {
             defaultMarkGeocode: false,
             collapsed: true,
             position: 'bottomright'
-        }).on('markgeocode', function(e) { mapLatLng(e.geocode.center) }).addTo(map)
+        }).on('markgeocode', function(e) { mapDoLatLng(e.geocode.center) }).addTo(map)
     ////////////////////////////////////////////////////////////
 
 
@@ -69,7 +69,7 @@ $(document).ready(function() {
     map.on('click', function(event) {
         $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
               ).success(function() { 
-                mapLatLng(event.latlng) 
+                mapDoLatLng(event.latlng) 
         })
     });
     ////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////
     // handle x,y coordinates from a map click or geocode
-    function mapLatLng(latlng) {
+    function mapDoLatLng(latlng) {
 
         var mapZoom = map.getZoom();
         (mapZoom < 12) ? zoom = 12 : zoom = mapZoom
@@ -85,7 +85,7 @@ $(document).ready(function() {
         map.flyTo(latlng, zoom)
 
         if (marker) map.removeLayer(marker);
-        marker = new L.marker(latlng)
+        marker = new L.marker(latlng, { draggable: true, autopan: true })
         map.addLayer(marker);
     }
     ////////////////////////////////////////////////////////////
@@ -93,10 +93,14 @@ $(document).ready(function() {
 
 
 
-    map.on('zoom', function(event) {
-        console.log("zoom changed " + event);
+
+    map.on('zoomend', function(event) {
+        // console.log("zoom changed " + event);
         console.log(event);
+        // console.log(event.sourceTarget['anitmatetozoom']);
     });
+
+
     
 })
 
