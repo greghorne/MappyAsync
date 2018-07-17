@@ -76,7 +76,6 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////
     // add geocoder and plot marker
-    var marker
     var geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             collapsed: true,
@@ -135,9 +134,17 @@ $(document).ready(function() {
             marker.bindPopup(name).openPopup();
             addLocationToDB(name, "geocoded location", latlng)
         }
-        
     }
     ////////////////////////////////////////////////////////////
+
+    marker.on('dragend', function(event) {
+        console.log(event.target._latlng)
+    })
+
+    // marker.move = function(e) {
+    //     console.log(e)
+    // }
+
 
     function addLocationToDB(name, type, latlng) {
         var db = openedDB.result;
