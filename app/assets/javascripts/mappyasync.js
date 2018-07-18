@@ -22,6 +22,8 @@ openedDB.onupgradeneeded = function() {
 }
 ////////////////////////////////////////////////////////////
 
+
+
 var marker = L.marker()
 
 $(document).ready(function() {
@@ -30,20 +32,20 @@ $(document).ready(function() {
     // define base map layer
     var grayscale = L.tileLayer("http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png", {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoon: 6,
-        maxZoom: 15
+        minZoon: 5,
+        maxZoom: 17
     });
 
     var esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}, detectRetina=true', {
         attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
-        minZoom: 6,
-        maxZoom: 15
+        minZoom: 5,
+        maxZoom: 17
     });
 
     var osm = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoom: 6,
-        maxZoom: 15
+        minZoom: 5,
+        maxZoom: 17
     });
     ////////////////////////////////////////////////////////////
 
@@ -113,12 +115,26 @@ $(document).ready(function() {
         map.addLayer(marker);
 
         if (name == "clicked location") {
-                url = "https://nominatim.openstreetmap.org/reverse?" +  
-                      "format=jsonv2&lat=" + latlng.lat + "&lon=" + latlng.lng + "&zoom=18&addressdetails=1"
+
+                var OSM = false;
+
+                if (OSM) {
+                    url = "https://nominatim.openstreetmap.org/reverse?" +  
+                          "format=jsonv2&lat=" + latlng.lat + "&lon=" + latlng.lng + "&zoom=18&addressdetails=1"
+                } else {
+                    url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latlng.lat +"," + latlng.lng + "&key=AIzaSyCOt29qPo0EJgvO57L_ci4-XSwqSWNQgFE"
+                }
 
                 $.ajax({url: url}).success(function(response) {
-                    marker.bindPopup(response.display_name).openPopup();
-                    addLocationToDB(response.display_name, "click location", latlng)
+                    if (OSM) {
+                        marker.bindPopup(response.display_name).openPopup();
+                        addLocationToDB(response.display_name, "click location", latlng)
+                    } else {
+                        console.log(response.results[0])
+                        marker.bindPopup(response.results[0]["formatted_address"]).openPopup();
+                        addLocationToDB(response.results[0]["formatted_address"], "click location", latlng)
+                    }
+                    
                 })
 
         } else {
