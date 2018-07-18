@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require rails-ujs
 //= require leaflet
+//= require Control.Geocoder
 //= require_tree .
 
 

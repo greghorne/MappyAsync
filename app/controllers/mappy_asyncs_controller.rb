@@ -8,12 +8,7 @@ class MappyAsyncsController < ApplicationController
     end
 
     def mapclick
-        # puts
-        # puts "===================="
-        # puts "mapclick..."
-        # puts params[:lat] + ", " + params[:lng]
-        # puts "===================="
-        # puts
+
 
         json = { :msg => "Just a popup"}
         render json: json

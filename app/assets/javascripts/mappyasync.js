@@ -82,7 +82,7 @@ $(document).ready(function() {
     var geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             collapsed: true,
-            position: 'bottomright'
+            position: 'topright'
         }).on('markgeocode', function(e) { 
             console.log(e)
             mapDoLatLng(e.geocode.center, e.geocode.name) 
