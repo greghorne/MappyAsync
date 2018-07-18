@@ -22,6 +22,7 @@ openedDB.onupgradeneeded = function() {
 }
 ////////////////////////////////////////////////////////////
 
+var marker = L.marker()
 
 $(document).ready(function() {
 
@@ -111,21 +112,11 @@ $(document).ready(function() {
         marker = new L.marker(latlng, { draggable: true, autopan: true })
         map.addLayer(marker);
 
-        // open indexedDB and add lat,lng
-
-
         if (name == "clicked location") {
                 url = "https://nominatim.openstreetmap.org/reverse?" +  
                       "format=jsonv2&lat=" + latlng.lat + "&lon=" + latlng.lng + "&zoom=18&addressdetails=1"
 
                 $.ajax({url: url}).success(function(response) {
-
-                    // strip ", United States of America" from display_name
-                    // if (response.display_name.slice(response.display_name.length - ", United States of America".length, response.display_name.length) == ", United States of America") {
-                    //     var prepared_name = response.display_name.slice(0, response.display_name.length - ", United States of America".length)
-                    // } else {
-                    //     var prepared_name = response.display_name
-                    // }
                     marker.bindPopup(response.display_name).openPopup();
                     addLocationToDB(response.display_name, "click location", latlng)
                 })
@@ -134,31 +125,26 @@ $(document).ready(function() {
             marker.bindPopup(name).openPopup();
             addLocationToDB(name, "geocoded location", latlng)
         }
+
+        // CHECK ON THIS!!!
+        marker.on('dragend', function(event) {
+            mapDoLatLng(event.target._latlng, "clicked location")
+            console.log(event.target._latlng)
+        });
+
     }
     ////////////////////////////////////////////////////////////
 
-    marker.on('dragend', function(event) {
-        console.log(event.target._latlng)
-    })
 
-    // marker.move = function(e) {
-    //     console.log(e)
-    // }
-
-
+    ////////////////////////////////////////////////////////////
+    // add location info to indexedDB
     function addLocationToDB(name, type, latlng) {
         var db = openedDB.result;
         var tx = db.transaction(["LocationStore"], "readwrite");
         var store = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
         store.put({name: name, type: type, location: {lat: latlng.lat, lng:latlng.lng}})
     }
+    ////////////////////////////////////////////////////////////
 
-
-
-    map.on('zoomend', function(event) {
-        // console.log("zoom changed " + event);
-        // console.log(event);
-        // console.log(event.sourceTarget['anitmatetozoom']);
-    });
 })
 
