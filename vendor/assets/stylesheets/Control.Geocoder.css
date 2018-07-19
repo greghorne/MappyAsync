@@ -46,7 +46,8 @@
 	height: 40px;
 	border: none;
 	background-color: white;
-	background-image: url(geocoder.png);
+	/* background-image: url(geocoder.png); */
+	background-image: url(magnifying-glass-2-262.png);
 	background-repeat: no-repeat;
 	background-position: center;
 	cursor: pointer;
