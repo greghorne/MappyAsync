@@ -11,6 +11,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
     background-repeat: no-repeat;
     background-position: center;
     z-index:  800;    
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
 }
 .button-sidebar {
     background-image: url(settings-18-26.png);

@@ -161,7 +161,8 @@ $(document).ready(function() {
         
         onAdd: function(map) {
 
-            var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control leaflet-control-custom');
+            // var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control leaflet-control-custom');
+            var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control-custom');
          
             container.onclick = function(){
                 if (sidebar.isVisible()) {
