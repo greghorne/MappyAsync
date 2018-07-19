@@ -103,30 +103,29 @@ $(document).ready(function() {
 
 
 
-    onAdd = function(map) {
-        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-     
-        container.style.backgroundColor = 'white';
-        container.style.width = '30px';
-        container.style.height = '30px';
-     
-        container.onclick = function(){
-          console.log('buttonClicked');
-        }
-        return container;
-      }
 
-    var ourCustomControl = L.Control.extend({
+    var buttonCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
         },
         
         onAdd: function(map) {
+
+            var container = new L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+    
+            container.style.backgroundColor = 'blue';
+            container.style.width = '30px';
+            container.style.height = '30px';
+         
+            container.onclick = function(){
+                alert("clicked")
+              console.log('buttonClicked');
+            }
             return container;
         }
     });
 
-    map.addControl(new ourCustomControl());
+    map.addControl(new buttonCustomControl());
 
 
 
