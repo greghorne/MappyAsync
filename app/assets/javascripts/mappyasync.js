@@ -84,6 +84,10 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////
     // add geocoder and plot marker
+    //
+    // credit:  https://github.com/perliedman/leaflet-control-geocoder
+    // package: https://unpkg.com/leaflet-control-geocoder@1.5.8/
+    //
     var geocoder = L.Control.geocoder({
             defaultMarkGeocode: false,
             collapsed: true,
