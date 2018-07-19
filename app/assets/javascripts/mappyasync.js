@@ -103,8 +103,7 @@ $(document).ready(function() {
 
 
 
-
-    var buttonCustomControl = L.Control.extend({
+    var sidebarButtonCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
         },
@@ -112,27 +111,6 @@ $(document).ready(function() {
         onAdd: function(map) {
 
             var container = L.DomUtil.create('div', 'button-tool button-sidebar leaflet-bar leaflet-control leaflet-control-custom');
-    
-            // container.style.backgroundColor = 'white';
-            // container.style.width = '40px';
-            // container.style.height = '40px';
-            // container.style.backgroundImage = 'url(http://0.0.0.0:3000/assets/settings-18-26.png)';
-            // container.style.backgroundSize = "26px 26px";
-            // container.style.backgroundimagePostion = 'center';
-            // container.style.display = 'block';
-            // container.style.margin = '0 auto';
-
-            // container.style.background-repeat = no-repeat;
-            // container.style.zIndexOffset = 800;
-
-            // border-radius: 4px;
-            // border: none;
-            // background-color: white;
-            // /* background-image: url(geocoder.png); */
-            // background-image: url(magnifying-glass-2-262.png);
-            // background-repeat: no-repeat;
-            // background-position: center;
-            // cursor: pointer;
          
             container.onclick = function(){
                 if (sidebar.isVisible()) {
@@ -146,8 +124,58 @@ $(document).ready(function() {
             return container;
         }
     });
+    map.addControl(new sidebarButtonCustomControl());
 
-    map.addControl(new buttonCustomControl());
+
+
+    var handButtonCustomControl = L.Control.extend({
+        options: {
+            position: 'bottomright' 
+        },
+        
+        onAdd: function(map) {
+
+            var container = L.DomUtil.create('div', 'button-tool button-hand leaflet-bar leaflet-control leaflet-control-custom');
+         
+            container.onclick = function(){
+                if (sidebar.isVisible()) {
+                    sidebar.hide();
+                } else {
+                    setTimeout(function () {
+                        sidebar.show();
+                    }, 500);
+                }
+            }
+            return container;
+        }
+    });
+    map.addControl(new handButtonCustomControl());
+
+
+
+
+    var pointerButtonCustomControl = L.Control.extend({
+        options: {
+            position: 'bottomright' 
+        },
+        
+        onAdd: function(map) {
+
+            var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control leaflet-control-custom');
+         
+            container.onclick = function(){
+                if (sidebar.isVisible()) {
+                    sidebar.hide();
+                } else {
+                    setTimeout(function () {
+                        sidebar.show();
+                    }, 500);
+                }
+            }
+            return container;
+        }
+    });
+    map.addControl(new pointerButtonCustomControl());
 
 
 
