@@ -28,6 +28,11 @@ var marker = L.marker()
 
 $(document).ready(function() {
 
+    // if (navigator.geolocation) {
+    //     navigator.geolocation.getCurrentPosition(function(location) {
+    //         console.log(postion.coords.latitude + ", " + postion.coords.longitude);
+    //     })
+    // }
     ////////////////////////////////////////////////////////////
     // define base map layer
     var grayscale = L.tileLayer("http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png", {
@@ -84,8 +89,7 @@ $(document).ready(function() {
             collapsed: true,
             position: 'topright'
         }).on('markgeocode', function(e) { 
-            console.log(e)
-            mapDoLatLng(e.geocode.center, e.geocode.name) 
+            mapGoToLatLng(e.geocode.center, e.geocode.name) 
         }).addTo(map)
     ////////////////////////////////////////////////////////////
 
@@ -95,7 +99,7 @@ $(document).ready(function() {
     map.on('click', function(event) {
         $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
               ).success(function() { 
-                mapDoLatLng(event.latlng, "clicked location") 
+                mapGoToLatLng(event.latlng, "clicked location") 
         })
     });
     ////////////////////////////////////////////////////////////
@@ -103,7 +107,7 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////
     // handle x,y coordinates from a map click or geocode
-    function mapDoLatLng(latlng, name) {
+    function mapGoToLatLng(latlng, name) {
 
         var mapZoom = map.getZoom();
         (mapZoom < 12) ? zoom = 12 : zoom = mapZoom
@@ -130,7 +134,6 @@ $(document).ready(function() {
                         marker.bindPopup(response.display_name).openPopup();
                         addLocationToDB(response.display_name, "click location", latlng)
                     } else {
-                        console.log(response.results[0])
                         marker.bindPopup(response.results[0]["formatted_address"]).openPopup();
                         addLocationToDB(response.results[0]["formatted_address"], "click location", latlng)
                     }
@@ -142,9 +145,9 @@ $(document).ready(function() {
             addLocationToDB(name, "geocoded location", latlng)
         }
 
-        // CHECK ON THIS!!!
+        // CHECK ON THIS!!!  GMH
         marker.on('dragend', function(event) {
-            mapDoLatLng(event.target._latlng, "clicked location")
+            mapGoToLatLng(event.target._latlng, "clicked location")
             console.log(event.target._latlng)
         });
 
