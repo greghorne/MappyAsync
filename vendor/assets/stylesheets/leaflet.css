@@ -499,8 +499,9 @@
 	}
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-	background: white;
-	color: #333;
+	background: lightskyblue;
+	/* color: #333; */
+	color: white;
 	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
 	}
 .leaflet-container a.leaflet-popup-close-button {
