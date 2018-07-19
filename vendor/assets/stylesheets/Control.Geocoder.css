@@ -42,8 +42,8 @@
 
 .leaflet-control-geocoder-icon {
 	border-radius: 4px;
-	width: 40px;
-	height: 40px;
+	/* width: 36px;
+	height: 36px; */
 	border: none;
 	background-color: white;
 	/* background-image: url(geocoder.png); */
@@ -54,8 +54,8 @@
 }
 
 .leaflet-touch .leaflet-control-geocoder-icon {
-	width: 44px;
-	height: 44px;
+	width: 36px;
+	height: 36px;
 }
 
 .leaflet-control-geocoder-throbber .leaflet-control-geocoder-icon {

@@ -344,16 +344,16 @@
 	}
 .leaflet-control-layers-toggle {
 	background-image: url(layers.png);
-	width: 36px;
-	height: 36px;
+	width: 26px;
+	height: 26px;
 	}
 .leaflet-retina .leaflet-control-layers-toggle {
 	background-image: url(layers-2x.png);
 	background-size: 26px 26px;
 	}
 .leaflet-touch .leaflet-control-layers-toggle {
-	width: 44px;
-	height: 44px;
+	width: 36px;
+	height: 36px;
 	}
 .leaflet-control-layers .leaflet-control-layers-list,
 .leaflet-control-layers-expanded .leaflet-control-layers-toggle {
