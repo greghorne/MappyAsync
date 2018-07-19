@@ -83,6 +83,58 @@ $(document).ready(function() {
 
 
     ////////////////////////////////////////////////////////////
+    // add sidebar
+    // credit: https://github.com/Turbo87/leaflet-sidebar
+    //
+    var sidebar = L.control.sidebar('sidebar', {
+        position: 'left',
+        closeButton: true,
+        autoPan: false
+    });
+    
+    // setTimeout(function () {
+    //     sidebar.show();
+    // }, 500);
+
+    map.addControl(sidebar);
+    sidebar.setContent('<center><b>MappyAsync Settings</b></center>');
+    ////////////////////////////////////////////////////////////
+
+
+
+
+    onAdd = function(map) {
+        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+     
+        container.style.backgroundColor = 'white';
+        container.style.width = '30px';
+        container.style.height = '30px';
+     
+        container.onclick = function(){
+          console.log('buttonClicked');
+        }
+        return container;
+      }
+
+    var ourCustomControl = L.Control.extend({
+        options: {
+            position: 'bottomright' 
+        },
+        
+        onAdd: function(map) {
+            return container;
+        }
+    });
+
+    map.addControl(new ourCustomControl());
+
+
+
+
+
+
+
+    ////////////////////////////////////////////////////////////
     // add geocoder and plot marker
     //
     // credit:  https://github.com/perliedman/leaflet-control-geocoder

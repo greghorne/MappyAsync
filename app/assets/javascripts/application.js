@@ -15,6 +15,7 @@
 //= require rails-ujs
 //= require leaflet
 //= require Control.Geocoder
+//= require L.Control.Sidebar
 //= require_tree .
 
 
