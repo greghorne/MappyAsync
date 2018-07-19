@@ -111,15 +111,37 @@ $(document).ready(function() {
         
         onAdd: function(map) {
 
-            var container = new L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+            var container = L.DomUtil.create('div', 'button-tool button-sidebar leaflet-bar leaflet-control leaflet-control-custom');
     
-            container.style.backgroundColor = 'blue';
-            container.style.width = '30px';
-            container.style.height = '30px';
+            // container.style.backgroundColor = 'white';
+            // container.style.width = '40px';
+            // container.style.height = '40px';
+            // container.style.backgroundImage = 'url(http://0.0.0.0:3000/assets/settings-18-26.png)';
+            // container.style.backgroundSize = "26px 26px";
+            // container.style.backgroundimagePostion = 'center';
+            // container.style.display = 'block';
+            // container.style.margin = '0 auto';
+
+            // container.style.background-repeat = no-repeat;
+            // container.style.zIndexOffset = 800;
+
+            // border-radius: 4px;
+            // border: none;
+            // background-color: white;
+            // /* background-image: url(geocoder.png); */
+            // background-image: url(magnifying-glass-2-262.png);
+            // background-repeat: no-repeat;
+            // background-position: center;
+            // cursor: pointer;
          
             container.onclick = function(){
-                alert("clicked")
-              console.log('buttonClicked');
+                if (sidebar.isVisible()) {
+                    sidebar.hide();
+                } else {
+                    setTimeout(function () {
+                        sidebar.show();
+                    }, 500);
+                }
             }
             return container;
         }
