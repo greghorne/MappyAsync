@@ -18,6 +18,10 @@ html, body { height: 100%; width: 100%; margin: 0px }
     background-image: url(settings-18-26.png);
  }
 
+ .button-sidebar:hover:before {
+     content: "sidebar";
+ }
+
  .button-hand {
     background-image: url(finger-and-thumb-26.png);
  }

@@ -5,7 +5,6 @@
 
 ////////////////////////////////////////////////////////////
 // prepare indexedDB 
-////////////////////////////////////////////////////////////
 var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
 
 var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
@@ -23,6 +22,39 @@ openedDB.onupgradeneeded = function() {
 ////////////////////////////////////////////////////////////
 
 
+////////////////////////////////////////////////////////////
+// define base map layers
+var grayscale = L.tileLayer("http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png", {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+    minZoon: 5,
+    maxZoom: 17
+});
+
+var esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}, detectRetina=true', {
+    attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+    minZoom: 5,
+    maxZoom: 17
+});
+
+var osm = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+    minZoom: 5,
+    maxZoom: 17
+});
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
+// add location info to indexedDB
+function addLocationToDB(name, type, latlng) {
+    var db = openedDB.result;
+    var tx = db.transaction(["LocationStore"], "readwrite");
+    var store = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
+    store.put({name: name, type: type, location: {lat: latlng.lat, lng:latlng.lng}})
+}
+////////////////////////////////////////////////////////////
+
+
 
 var marker = L.marker()
 
@@ -33,27 +65,6 @@ $(document).ready(function() {
     //         console.log(postion.coords.latitude + ", " + postion.coords.longitude);
     //     })
     // }
-    ////////////////////////////////////////////////////////////
-    // define base map layer
-    var grayscale = L.tileLayer("http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png", {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoon: 5,
-        maxZoom: 17
-    });
-
-    var esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}, detectRetina=true', {
-        attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
-        minZoom: 5,
-        maxZoom: 17
-    });
-
-    var osm = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoom: 5,
-        maxZoom: 17
-    });
-    ////////////////////////////////////////////////////////////
-
 
     ////////////////////////////////////////////////////////////
     // define map position, zoom and layer
@@ -92,10 +103,6 @@ $(document).ready(function() {
         autoPan: false
     });
     
-    // setTimeout(function () {
-    //     sidebar.show();
-    // }, 500);
-
     map.addControl(sidebar);
     sidebar.setContent('<center><b>MappyAsync Settings</b></center>');
     ////////////////////////////////////////////////////////////
@@ -261,15 +268,7 @@ $(document).ready(function() {
     ////////////////////////////////////////////////////////////
 
 
-    ////////////////////////////////////////////////////////////
-    // add location info to indexedDB
-    function addLocationToDB(name, type, latlng) {
-        var db = openedDB.result;
-        var tx = db.transaction(["LocationStore"], "readwrite");
-        var store = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
-        store.put({name: name, type: type, location: {lat: latlng.lat, lng:latlng.lng}})
-    }
-    ////////////////////////////////////////////////////////////
+
 
 })
 
