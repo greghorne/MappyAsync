@@ -233,7 +233,7 @@ $(document).ready(function() {
 
         if (name == "clicked location") {
 
-                var OSM = false;
+                var OSM = true; // GOOGLE if false
 
                 if (OSM) {
                     url = "https://nominatim.openstreetmap.org/reverse?" +  
@@ -243,16 +243,13 @@ $(document).ready(function() {
                 }
 
                 $.ajax({url: url}).success(function(response) {
-                    if (response.status =="OK") {
-                        if (OSM) {
-                            marker.bindPopup(response.display_name).openPopup();
-                            addLocationToDB(response.display_name, "click location", latlng);
-                        } else {
-                            marker.bindPopup(response.results[0]["formatted_address"]).openPopup();
-                            addLocationToDB(response.results[0]["formatted_address"], "click location", latlng);
-                        }
+                    if (OSM && !response.error) {
+                        marker.bindPopup(response.display_name).openPopup();
+                        addLocationToDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
+                    } else if (response.status == "OK") {
+                        marker.bindPopup(response.results[0]["formatted_address"]).openPopup();
+                        addLocationToDB(response.results[0]["formatted_address"], "click location", latlng);
                     };
-                    
                 });
 
         } else {
@@ -263,7 +260,6 @@ $(document).ready(function() {
         // CHECK ON THIS!!!  GMH
         marker.on('dragend', function(event) {
             mapGoToLatLng(event.target._latlng, "clicked location")
-            console.log(event.target._latlng)
         });
 
     }
