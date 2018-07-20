@@ -2,8 +2,7 @@
 //     console.log("It works on each visit!")
 // })
 
-
-const CONST_OSM                 = false; // GOOGLE if false
+const CONST_OSM_REVERSE_GEOCODING = false; // GOOGLE if false
 
 const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse"
 const CONST_OSM_FORMAT          = "jsonv2"
@@ -13,22 +12,7 @@ const CONST_OSM_ADDR_DETAILS    =  1
 const CONST_GOOGLE_URL          = "https://maps.googleapis.com/maps/api/geocode/json"
 const CONST_GOOGLE_KEY          = "AIzaSyCOt29qPo0EJgvO57L_ci4-XSwqSWNQgFE"
 
-
-const CONST_MAP1_LAYER          = "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png"
-const CONST_MAP1_ATTR           = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-const CONST_MAP1_MIN_ZOOM       =   5
-const CONST_MAP1_MAX_ZOOM       = 17
-
-const CONST_MAP2_LAYER          = 'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}, detectRetina=true'
-const CONST_MAP2_ATTR           = 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC'
-const CONST_MAP2_MIN_ZOOM       =  5
-const CONST_MAP2_MAX_ZOOM       = 17
-
-const CONST_MAP3_LAYER          = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-const CONST_MAP3_ATTR           = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-const CONST_MAP3_MIN_ZOOM       =  5
-const CONST_MAP3_MAX_ZOOM       = 17
-
+// defintion of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
         name: "Grayscale",
@@ -53,10 +37,6 @@ const CONST_MAP_LAYERS = [
     }
 ];
 
-
-
-
-////////////////////////////////////////////////////////////
 // prepare indexedDB 
 var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
 
@@ -72,18 +52,7 @@ openedDB.onupgradeneeded = function() {
     var db = openedDB.result;
     var store = db.createObjectStore("LocationStore", {keyPath: "id", autoIncrement: true});
 }
-////////////////////////////////////////////////////////////
 
-
-////////////////////////////////////////////////////////////
-// define base map layers
-var grayscale   = L.tileLayer(CONST_MAP1_LAYER, { attribution: CONST_MAP1_ATTR, minZoon: CONST_MAP1_MIN_ZOOM, maxZoom: CONST_MAP1_MAX_ZOOM});
-var esri        = L.tileLayer(CONST_MAP2_LAYER, { attribution: CONST_MAP2_ATTR, minZoon: CONST_MAP2_MIN_ZOOM, maxZoom: CONST_MAP2_MAX_ZOOM});
-var osm         = L.tileLayer(CONST_MAP3_LAYER, { attribution: CONST_MAP3_ATTR, minZoon: CONST_MAP3_MIN_ZOOM, maxZoom: CONST_MAP3_MAX_ZOOM});
-////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////
 // add location info to indexedDB
 function addLocationToindexedDB(name, type, latlng) {
     var db = openedDB.result;
@@ -91,62 +60,36 @@ function addLocationToindexedDB(name, type, latlng) {
     var store = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
     store.put({name: name, type: type, location: {lat: latlng.lat, lng:latlng.lng}})
 }
-////////////////////////////////////////////////////////////
 
-
+// build map layers (dynamically) from CONSTANT json structure
+var mapLayers = [];
+var baseMaps  = {};
+for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
+    mapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { attribution: CONST_MAP_LAYERS[n].attribution, minZoon: CONST_MAP_LAYERS[n].minZoom, maxZoom: CONST_MAP_LAYERS[n].maxZoom})
+    baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
+}
 
 var marker = L.marker()
 
+
+
 $(document).ready(function() {
 
-    // if (navigator.geolocation) {
-    //     navigator.geolocation.getCurrentPosition(function(location) {
-    //         console.log(postion.coords.latitude + ", " + postion.coords.longitude);
-    //     })
-    // }
-
-    // build map layers
-    var mapLayers = [];
-    var baseMaps  = {};
-    var name = null;
-    for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
-        mapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { attribution: CONST_MAP_LAYERS[n].attribution, minZoon: CONST_MAP_LAYERS[n].minZoom, maxZoom: CONST_MAP_LAYERS[n].maxZoom})
-        // jsonObject = { [CONST_MAP_LAYERS[n].name]: mapLayers[n] }
-        baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
-    }
-    console.log(baseMaps)
-
-    ////////////////////////////////////////////////////////////
     // define map position, zoom and layer
     var map = L.map('map', {
         center: [39.5, -98.35],
         zoom: 5,
         layers: [mapLayers[0]]
     });
-    ////////////////////////////////////////////////////////////
+
+    // add all map layers to layer control
     L.control.layers(baseMaps).addTo(map)
 
-    ////////////////////////////////////////////////////////////
-    // define base maps and layer control and add to map
-    // var baseMaps = {
-    //     "Grayscale": mapLayers[0],
-    //     "Esri": mapLayers[1],
-    //     "OSM": mapLayers[2]
-    // }
-    
-    ////////////////////////////////////////////////////////////
-
-
-    ////////////////////////////////////////////////////////////
     // add scalebar
     L.control.scale({imperial: true, metric: false}).addTo(map)
-    ////////////////////////////////////////////////////////////
 
-
-    ////////////////////////////////////////////////////////////
     // add sidebar
     // credit: https://github.com/Turbo87/leaflet-sidebar
-    //
     var sidebar = L.control.sidebar('sidebar', {
         position: 'left',
         closeButton: true,
@@ -155,9 +98,6 @@ $(document).ready(function() {
     
     map.addControl(sidebar);
     sidebar.setContent('<center><b>MappyAsync Settings</b></center>');
-    ////////////////////////////////////////////////////////////
-
-
 
 
     var sidebarButtonCustomControl = L.Control.extend({
@@ -235,29 +175,17 @@ $(document).ready(function() {
     });
     map.addControl(new pointerButtonCustomControl());
 
-
-
-
-
-
-
-    ////////////////////////////////////////////////////////////
     // add geocoder and plot marker
-    //
     // credit:  https://github.com/perliedman/leaflet-control-geocoder
     // package: https://unpkg.com/leaflet-control-geocoder@1.5.8/
-    //
     var geocoder = L.Control.geocoder({
-            defaultMarkGeocode: false,
-            collapsed: true,
-            position: 'topright'
-        }).on('markgeocode', function(e) { 
-            mapGoToLatLng(e.geocode.center, e.geocode.name) 
-        }).addTo(map)
-    ////////////////////////////////////////////////////////////
+        defaultMarkGeocode: false,
+        collapsed: true,
+        position: 'topright'
+    }).on('markgeocode', function(e) { 
+        mapGoToLatLng(e.geocode.center, e.geocode.name) 
+    }).addTo(map)
 
-
-    ////////////////////////////////////////////////////////////
     // add map click event
     map.on('click', function(event) {
         $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
@@ -265,10 +193,8 @@ $(document).ready(function() {
                 mapGoToLatLng(event.latlng, "clicked location") 
         })
     });
-    ////////////////////////////////////////////////////////////
+    
 
-
-    ////////////////////////////////////////////////////////////
     // handle x,y coordinates from a map click or geocode
     function mapGoToLatLng(latlng, name) {
 
@@ -285,7 +211,7 @@ $(document).ready(function() {
 
                 var url, params
 
-                if (CONST_OSM) {
+                if (CONST_OSM_REVERSE_GEOCODING) {
                     url     = CONST_OSM_URL
                     params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
                 } else {
@@ -314,10 +240,5 @@ $(document).ready(function() {
         });
 
     }
-    ////////////////////////////////////////////////////////////
-
-
-
-
 })
 
