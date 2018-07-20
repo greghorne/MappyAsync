@@ -14,18 +14,12 @@ html, body { height: 100%; width: 100%; margin: 0px }
 	cursor: -webkit-grab;
 	cursor:    -moz-grab;
 }
-.button-sidebar {
-    background-image: url(settings-18-26.png);
- }
 
- .button-sidebar:hover:before {
-     content: "sidebar";
- }
+.button-sidebar { background-image: url(settings-18-26.png); }
+.button-sidebar:hover:before { content: "sidebar"; }
 
- .button-hand {
-    background-image: url(finger-and-thumb-26.png);
- }
+.button-hand { background-image: url(finger-and-thumb-26.png); }
+.button-hand:hover:before { content: "hand"; }
 
- .button-pointer {
-    background-image: url(whole-hand-26.png);
- }
+.button-pointer { background-image: url(whole-hand-26.png); }
+.button-pointer:hover:before { content: "pointer"; }

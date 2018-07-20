@@ -243,15 +243,17 @@ $(document).ready(function() {
                 }
 
                 $.ajax({url: url}).success(function(response) {
-                    if (OSM) {
-                        marker.bindPopup(response.display_name).openPopup();
-                        addLocationToDB(response.display_name, "click location", latlng)
-                    } else {
-                        marker.bindPopup(response.results[0]["formatted_address"]).openPopup();
-                        addLocationToDB(response.results[0]["formatted_address"], "click location", latlng)
-                    }
+                    if (response.status =="OK") {
+                        if (OSM) {
+                            marker.bindPopup(response.display_name).openPopup();
+                            addLocationToDB(response.display_name, "click location", latlng);
+                        } else {
+                            marker.bindPopup(response.results[0]["formatted_address"]).openPopup();
+                            addLocationToDB(response.results[0]["formatted_address"], "click location", latlng);
+                        }
+                    };
                     
-                })
+                });
 
         } else {
             marker.bindPopup(name).openPopup();
