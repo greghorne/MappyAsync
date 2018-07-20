@@ -46,7 +46,7 @@ var osm = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 ////////////////////////////////////////////////////////////
 // add location info to indexedDB
-function addLocationToDB(name, type, latlng) {
+function addLocationToindexedDB(name, type, latlng) {
     var db = openedDB.result;
     var tx = db.transaction(["LocationStore"], "readwrite");
     var store = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
@@ -233,28 +233,39 @@ $(document).ready(function() {
 
         if (name == "clicked location") {
 
-                var OSM = true; // GOOGLE if false
+                const CONST_OSM                 = false; // GOOGLE if false
 
-                if (OSM) {
-                    url = "https://nominatim.openstreetmap.org/reverse?" +  
-                          "format=jsonv2&lat=" + latlng.lat + "&lon=" + latlng.lng + "&zoom=18&addressdetails=1"
+                const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse"
+                const CONST_OSM_FORMAT          = "jsonv2"
+                const CONST_OSM_ZOOM            = 18
+                const CONST_OSM_ADDR_DETAILS    = 1
+
+                const CONST_GOOGLE_URL          = "https://maps.googleapis.com/maps/api/geocode/json"
+                const CONST_GOOGLE_KEY          = "AIzaSyCOt29qPo0EJgvO57L_ci4-XSwqSWNQgFE"
+                
+                var params
+
+                if (CONST_OSM) {
+                    url     = CONST_OSM_URL
+                    params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
                 } else {
-                    url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latlng.lat +"," + latlng.lng + "&key=AIzaSyCOt29qPo0EJgvO57L_ci4-XSwqSWNQgFE"
+                    url     = CONST_GOOGLE_URL
+                    params  = { latlng: latlng.lat + ',' + latlng.lng, key: CONST_GOOGLE_KEY }
                 }
-
-                $.ajax({url: url}).success(function(response) {
-                    if (OSM && !response.error) {
+console.log(url)
+                $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
+                    if (CONST_OSM && !response.error) {
                         marker.bindPopup(response.display_name).openPopup();
-                        addLocationToDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
+                        addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
                     } else if (response.status == "OK") {
                         marker.bindPopup(response.results[0]["formatted_address"]).openPopup();
-                        addLocationToDB(response.results[0]["formatted_address"], "click location", latlng);
+                        addLocationToindexedDB(response.results[0]["formatted_address"], "click location", latlng);
                     };
                 });
 
         } else {
             marker.bindPopup(name).openPopup();
-            addLocationToDB(name, "geocoded location", latlng)
+            addLocationToindexedDB(name, "geocoded location", latlng)
         }
 
         // CHECK ON THIS!!!  GMH
