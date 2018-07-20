@@ -6,7 +6,7 @@ const CONST_OSM_REVERSE_GEOCODING = false; // GOOGLE if false
 
 const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse"
 const CONST_OSM_FORMAT          = "jsonv2"
-const CONST_OSM_ZOOM            = 18
+const CONST_OSM_GEOCODE_ZOOM    = 18
 const CONST_OSM_ADDR_DETAILS    =  1
 
 const CONST_GOOGLE_URL          = "https://maps.googleapis.com/maps/api/geocode/json"
@@ -39,33 +39,36 @@ const CONST_MAP_LAYERS = [
 
 // prepare indexedDB 
 var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
-
-var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 
 // prefixes of window.IDB objects
 window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
-window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
+window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
  
 var openedDB = indexedDB.open("MappyAsync", 1);
 
 openedDB.onupgradeneeded = function() {
-    var db = openedDB.result;
+    var db    = openedDB.result;
     var store = db.createObjectStore("LocationStore", {keyPath: "id", autoIncrement: true});
 }
 
 // add location info to indexedDB
 function addLocationToindexedDB(name, type, latlng) {
-    var db = openedDB.result;
-    var tx = db.transaction(["LocationStore"], "readwrite");
-    var store = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
+    var db      = openedDB.result;
+    var tx      = db.transaction(["LocationStore"], "readwrite");
+    var store   = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
     store.put({name: name, type: type, location: {lat: latlng.lat, lng:latlng.lng}})
 }
 
-// build map layers (dynamically) from CONSTANT json structure
+// build map layers (dynamically) from CONST_MAP_LAYERS
 var mapLayers = [];
 var baseMaps  = {};
 for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
-    mapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { attribution: CONST_MAP_LAYERS[n].attribution, minZoon: CONST_MAP_LAYERS[n].minZoom, maxZoom: CONST_MAP_LAYERS[n].maxZoom})
+    mapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { 
+        attribution: CONST_MAP_LAYERS[n].attribution, 
+        minZoon: CONST_MAP_LAYERS[n].minZoom, 
+        maxZoom: CONST_MAP_LAYERS[n].maxZoom 
+    })
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
 
@@ -213,14 +216,14 @@ $(document).ready(function() {
 
                 if (CONST_OSM_REVERSE_GEOCODING) {
                     url     = CONST_OSM_URL
-                    params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
+                    params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
                 } else {
                     url     = CONST_GOOGLE_URL
                     params  = { latlng: latlng.lat + ',' + latlng.lng, key: CONST_GOOGLE_KEY }
                 }
 
                 $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
-                    if (CONST_OSM && !response.error) {
+                    if (CONST_OSM_REVERSE_GEOCODING && !response.error) {
                         marker.bindPopup(response.display_name).openPopup();
                         addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
                     } else if (response.status == "OK") {
