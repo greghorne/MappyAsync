@@ -3,6 +3,59 @@
 // })
 
 
+const CONST_OSM                 = false; // GOOGLE if false
+
+const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse"
+const CONST_OSM_FORMAT          = "jsonv2"
+const CONST_OSM_ZOOM            = 18
+const CONST_OSM_ADDR_DETAILS    =  1
+
+const CONST_GOOGLE_URL          = "https://maps.googleapis.com/maps/api/geocode/json"
+const CONST_GOOGLE_KEY          = "AIzaSyCOt29qPo0EJgvO57L_ci4-XSwqSWNQgFE"
+
+
+const CONST_MAP1_LAYER          = "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png"
+const CONST_MAP1_ATTR           = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+const CONST_MAP1_MIN_ZOOM       =   5
+const CONST_MAP1_MAX_ZOOM       = 17
+
+const CONST_MAP2_LAYER          = 'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}, detectRetina=true'
+const CONST_MAP2_ATTR           = 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC'
+const CONST_MAP2_MIN_ZOOM       =  5
+const CONST_MAP2_MAX_ZOOM       = 17
+
+const CONST_MAP3_LAYER          = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+const CONST_MAP3_ATTR           = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+const CONST_MAP3_MIN_ZOOM       =  5
+const CONST_MAP3_MAX_ZOOM       = 17
+
+const CONST_MAP_LAYERS = [
+    {
+        name: "Grayscale",
+        url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        minZoom: 5,
+        maxZoom: 17
+    },
+    {
+        name: "Esri",
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}, detectRetina=true',
+        attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+        minZoom: 5,
+        maxZoom: 17
+    },
+    {
+        name: "OSM",
+        url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        attirbution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        minZoom: 5,
+        maxZoom: 17
+    }
+];
+
+
+
+
 ////////////////////////////////////////////////////////////
 // prepare indexedDB 
 var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
@@ -24,23 +77,9 @@ openedDB.onupgradeneeded = function() {
 
 ////////////////////////////////////////////////////////////
 // define base map layers
-var grayscale = L.tileLayer("http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png", {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-    minZoon: 5,
-    maxZoom: 17
-});
-
-var esri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}, detectRetina=true', {
-    attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
-    minZoom: 5,
-    maxZoom: 17
-});
-
-var osm = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-    minZoom: 5,
-    maxZoom: 17
-});
+var grayscale   = L.tileLayer(CONST_MAP1_LAYER, { attribution: CONST_MAP1_ATTR, minZoon: CONST_MAP1_MIN_ZOOM, maxZoom: CONST_MAP1_MAX_ZOOM});
+var esri        = L.tileLayer(CONST_MAP2_LAYER, { attribution: CONST_MAP2_ATTR, minZoon: CONST_MAP2_MIN_ZOOM, maxZoom: CONST_MAP2_MAX_ZOOM});
+var osm         = L.tileLayer(CONST_MAP3_LAYER, { attribution: CONST_MAP3_ATTR, minZoon: CONST_MAP3_MIN_ZOOM, maxZoom: CONST_MAP3_MAX_ZOOM});
 ////////////////////////////////////////////////////////////
 
 
@@ -66,24 +105,35 @@ $(document).ready(function() {
     //     })
     // }
 
+    // build map layers
+    var mapLayers = [];
+    var baseMaps  = {};
+    var name = null;
+    for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
+        mapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { attribution: CONST_MAP_LAYERS[n].attribution, minZoon: CONST_MAP_LAYERS[n].minZoom, maxZoom: CONST_MAP_LAYERS[n].maxZoom})
+        // jsonObject = { [CONST_MAP_LAYERS[n].name]: mapLayers[n] }
+        baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
+    }
+    console.log(baseMaps)
+
     ////////////////////////////////////////////////////////////
     // define map position, zoom and layer
     var map = L.map('map', {
         center: [39.5, -98.35],
         zoom: 5,
-        layers: [grayscale]
+        layers: [mapLayers[0]]
     });
     ////////////////////////////////////////////////////////////
-
+    L.control.layers(baseMaps).addTo(map)
 
     ////////////////////////////////////////////////////////////
     // define base maps and layer control and add to map
-    var baseMaps = {
-        "Grayscale": grayscale,
-        "Esri": esri,
-        "OSM": osm
-    }
-    L.control.layers(baseMaps).addTo(map)
+    // var baseMaps = {
+    //     "Grayscale": mapLayers[0],
+    //     "Esri": mapLayers[1],
+    //     "OSM": mapLayers[2]
+    // }
+    
     ////////////////////////////////////////////////////////////
 
 
@@ -233,17 +283,7 @@ $(document).ready(function() {
 
         if (name == "clicked location") {
 
-                const CONST_OSM                 = false; // GOOGLE if false
-
-                const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse"
-                const CONST_OSM_FORMAT          = "jsonv2"
-                const CONST_OSM_ZOOM            = 18
-                const CONST_OSM_ADDR_DETAILS    = 1
-
-                const CONST_GOOGLE_URL          = "https://maps.googleapis.com/maps/api/geocode/json"
-                const CONST_GOOGLE_KEY          = "AIzaSyCOt29qPo0EJgvO57L_ci4-XSwqSWNQgFE"
-                
-                var params
+                var url, params
 
                 if (CONST_OSM) {
                     url     = CONST_OSM_URL
@@ -252,7 +292,7 @@ $(document).ready(function() {
                     url     = CONST_GOOGLE_URL
                     params  = { latlng: latlng.lat + ',' + latlng.lng, key: CONST_GOOGLE_KEY }
                 }
-console.log(url)
+
                 $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
                     if (CONST_OSM && !response.error) {
                         marker.bindPopup(response.display_name).openPopup();
