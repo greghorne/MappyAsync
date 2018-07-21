@@ -4,11 +4,13 @@
 
 const CONST_OSM_REVERSE_GEOCODING = false; // GOOGLE if false
 
+// OSM reverse geocoder
 const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse"
 const CONST_OSM_FORMAT          = "jsonv2"
 const CONST_OSM_GEOCODE_ZOOM    = 18
 const CONST_OSM_ADDR_DETAILS    =  1
 
+// Google geocoder
 const CONST_GOOGLE_URL          = "https://maps.googleapis.com/maps/api/geocode/json"
 const CONST_GOOGLE_KEY          = "AIzaSyCOt29qPo0EJgvO57L_ci4-XSwqSWNQgFE"
 
@@ -37,6 +39,10 @@ const CONST_MAP_LAYERS = [
     }
 ];
 
+
+////////////////////////////////////////////////////////////
+//////////////////////   indexedDB   ///////////////////////
+////////////////////////////////////////////////////////////
 // prepare indexedDB 
 var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
 var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
@@ -47,6 +53,7 @@ window.IDBKeyRange    = window.IDBKeyRange || window.webkitIDBKeyRange || window
  
 var openedDB = indexedDB.open("MappyAsync", 1);
 
+// key definition
 openedDB.onupgradeneeded = function() {
     var db    = openedDB.result;
     var store = db.createObjectStore("LocationStore", {keyPath: "id", autoIncrement: true});
@@ -59,6 +66,9 @@ function addLocationToindexedDB(name, type, latlng) {
     var store   = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
     store.put({name: name, type: type, location: {lat: latlng.lat, lng:latlng.lng}})
 }
+////////////////////////////////////////////////////////////
+
+
 
 // build map layers (dynamically) from CONST_MAP_LAYERS
 var mapLayers = [];
@@ -72,10 +82,12 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
 
+
+// check this !!!
 var marker = L.marker()
 
 
-
+// here we go...
 $(document).ready(function() {
 
     // define map position, zoom and layer
@@ -91,14 +103,13 @@ $(document).ready(function() {
     // add scalebar
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
-    // add sidebar
+    // add slideout sidebar
     // credit: https://github.com/Turbo87/leaflet-sidebar
     var sidebar = L.control.sidebar('sidebar', {
         position: 'left',
         closeButton: true,
         autoPan: false
     });
-    
     map.addControl(sidebar);
     sidebar.setContent('<center><b>MappyAsync Settings</b></center>');
 
@@ -107,11 +118,9 @@ $(document).ready(function() {
         options: {
             position: 'bottomright' 
         },
-        
-        onAdd: function(map) {
 
+        onAdd: function(map) {
             var container = L.DomUtil.create('div', 'button-tool button-sidebar leaflet-bar leaflet-control leaflet-control-custom');
-         
             container.onclick = function(){
                 if (sidebar.isVisible()) {
                     sidebar.hide();
@@ -127,16 +136,13 @@ $(document).ready(function() {
     map.addControl(new sidebarButtonCustomControl());
 
 
-
     var handButtonCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
         },
         
         onAdd: function(map) {
-
             var container = L.DomUtil.create('div', 'button-tool button-hand leaflet-bar leaflet-control leaflet-control-custom');
-         
             container.onclick = function(){
                 if (sidebar.isVisible()) {
                     sidebar.hide();
@@ -152,18 +158,13 @@ $(document).ready(function() {
     map.addControl(new handButtonCustomControl());
 
 
-
-
     var pointerButtonCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
         },
         
         onAdd: function(map) {
-
-            // var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control leaflet-control-custom');
             var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control-custom');
-         
             container.onclick = function(){
                 if (sidebar.isVisible()) {
                     sidebar.hide();
@@ -178,9 +179,9 @@ $(document).ready(function() {
     });
     map.addControl(new pointerButtonCustomControl());
 
+
     // add geocoder and plot marker
     // credit:  https://github.com/perliedman/leaflet-control-geocoder
-    // package: https://unpkg.com/leaflet-control-geocoder@1.5.8/
     var geocoder = L.Control.geocoder({
         defaultMarkGeocode: false,
         collapsed: true,
