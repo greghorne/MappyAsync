@@ -87,38 +87,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 }
 ////////////////////////////////////////////////////////////
 
-
-// check this !!!
-var marker = L.marker()
-
-
-// here we go...
-$(document).ready(function() {
-
-    // define map position, zoom and layer
-    var map = L.map('map', {
-        center: [CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX],
-        zoom: CONST_MAP_DEFAULT_ZOOM,
-        layers: [mapLayers[0]]
-    });
-
-    // add all map layers to layer control
-    L.control.layers(baseMaps).addTo(map)
-
-    // add scalebar
-    L.control.scale({imperial: true, metric: false}).addTo(map)
-
-    // add slideout sidebar
-    // credit: https://github.com/Turbo87/leaflet-sidebar
-    var sidebar = L.control.sidebar('sidebar', {
-        position: 'left',
-        closeButton: true,
-        autoPan: false
-    });
-    map.addControl(sidebar);
-    sidebar.setContent('<center><b>MappyAsync Settings</b></center>');
-
-
+function initCustomButtons(map) {
     var sidebarButtonCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
@@ -183,8 +152,21 @@ $(document).ready(function() {
         }
     });
     map.addControl(new pointerButtonCustomControl());
+}
 
+function initSlideOutSidebar(map) {
+    // add slideout sidebar
+    // credit: https://github.com/Turbo87/leaflet-sidebar
+    var sidebar = L.control.sidebar('sidebar', {
+        position: 'left',
+        closeButton: true,
+        autoPan: false
+    });
+    map.addControl(sidebar);
+    sidebar.setContent('<center><b>MappyAsync Settings</b></center>');
+}
 
+function initGeocoder(map) {
     // add geocoder and plot marker
     // credit:  https://github.com/perliedman/leaflet-control-geocoder
     var geocoder = L.Control.geocoder({
@@ -192,61 +174,88 @@ $(document).ready(function() {
         collapsed: true,
         position: 'topright'
     }).on('markgeocode', function(e) { 
-        mapGoToLatLng(e.geocode.center, e.geocode.name) 
+        mapGoToLatLng(map, e.geocode.center, e.geocode.name) 
     }).addTo(map)
 
     // add map click event
     map.on('click', function(event) {
         $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
               ).success(function() { 
-                mapGoToLatLng(event.latlng, "clicked location") 
+                mapGoToLatLng(map, event.latlng, "clicked location") 
         })
     });
-    
+}
 
-    // handle x,y coordinates from a map click or geocode
-    function mapGoToLatLng(latlng, name) {
 
-        var mapZoom = map.getZoom();
-        (mapZoom < CONST_MAP_CLICK_MIN_ZOOM) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = mapZoom
+// handle x,y coordinates from a map click or geocode
+function mapGoToLatLng(map, latlng, name) {
 
-        map.flyTo(latlng, zoom)
+    var mapZoom = map.getZoom();
+    (mapZoom < CONST_MAP_CLICK_MIN_ZOOM) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = mapZoom
 
-        if (marker) map.removeLayer(marker);
-        marker = new L.marker(latlng, { draggable: true, autopan: true })
-        map.addLayer(marker);
+    map.flyTo(latlng, zoom)
 
-        if (name == "clicked location") {
+    if (marker) map.removeLayer(marker);
+    marker = new L.marker(latlng, { draggable: true, autopan: true })
+    map.addLayer(marker);
 
-                var url, params
+    if (name == "clicked location") {
 
-                if (CONST_OSM_REVERSE_GEOCODING) {
-                    url     = CONST_OSM_URL
-                    params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
-                } else {
-                    url     = CONST_GOOGLE_URL
-                    params  = { latlng: latlng.lat + ',' + latlng.lng, key: CONST_GOOGLE_KEY }
-                }
+            var url, params
 
-                $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
-                    if (CONST_OSM_REVERSE_GEOCODING && !response.error) {
-                        marker.bindPopup(response.display_name).openPopup();
-                        addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
-                    } else if (response.status == "OK") {
-                        marker.bindPopup(response.results[0]["formatted_address"]).openPopup();
-                        addLocationToindexedDB(response.results[0]["formatted_address"], "click location", latlng);
-                    };
-                });
+            if (CONST_OSM_REVERSE_GEOCODING) {
+                url     = CONST_OSM_URL
+                params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
+            } else {
+                url     = CONST_GOOGLE_URL
+                params  = { latlng: latlng.lat + ',' + latlng.lng, key: CONST_GOOGLE_KEY }
+            }
 
-        } else {
-            marker.bindPopup(name).openPopup();
-            addLocationToindexedDB(name, "geocoded location", latlng)
-        }
+            $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
+                if (CONST_OSM_REVERSE_GEOCODING && !response.error) {
+                    marker.bindPopup(response.display_name).openPopup();
+                    addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
+                } else if (response.status == "OK") {
+                    marker.bindPopup(response.results[0]["formatted_address"]).openPopup();
+                    addLocationToindexedDB(response.results[0]["formatted_address"], "click location", latlng);
+                };
+            });
 
-        // CHECK ON THIS!!!  GMH
-        marker.on('dragend', function(event) {
-            mapGoToLatLng(event.target._latlng, "clicked location")
-        });
-
+    } else {
+        marker.bindPopup(name).openPopup();
+        addLocationToindexedDB(name, "geocoded location", latlng)
     }
+
+    // CHECK ON THIS!!!  GMH
+    marker.on('dragend', function(event) {
+        mapGoToLatLng(map, event.target._latlng, "clicked location")
+    });
+
+}
+
+// check this !!!
+var marker = L.marker()
+
+
+// here we go...
+$(document).ready(function() {
+
+    // define map position, zoom and layer
+    var map = L.map('map', {
+        center: [CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX],
+        zoom: CONST_MAP_DEFAULT_ZOOM,
+        layers: [mapLayers[0]]
+    });
+
+    // add all map layers to layer control
+    L.control.layers(baseMaps).addTo(map)
+
+    // add scalebar
+    L.control.scale({imperial: true, metric: false}).addTo(map)
+
+    // initialization of map controls
+    initSlideOutSidebar(map);
+    initCustomButtons(map);
+    initGeocoder(map)
+ 
 })
