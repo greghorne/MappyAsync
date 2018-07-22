@@ -4,6 +4,8 @@
 
 const CONST_OSM_REVERSE_GEOCODING = false; // GOOGLE if false
 
+const CONST_MAP_CLICK_MIN_ZOOM = 12
+
 // default map settings
 const CONST_MAP_DEFAULT_LONGITUDEX = -98.35
 const CONST_MAP_DEFAULT_LATITUDEY  =  39.5
@@ -45,9 +47,6 @@ const CONST_MAP_LAYERS = [
 ];
 
 
-////////////////////////////////////////////////////////////
-//////////////////////   indexedDB   ///////////////////////
-////////////////////////////////////////////////////////////
 // prepare indexedDB 
 var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
 var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
@@ -86,6 +85,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     })
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
+////////////////////////////////////////////////////////////
 
 
 // check this !!!
@@ -208,7 +208,7 @@ $(document).ready(function() {
     function mapGoToLatLng(latlng, name) {
 
         var mapZoom = map.getZoom();
-        (mapZoom < 12) ? zoom = 12 : zoom = mapZoom
+        (mapZoom < CONST_MAP_CLICK_MIN_ZOOM) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = mapZoom
 
         map.flyTo(latlng, zoom)
 
@@ -250,4 +250,3 @@ $(document).ready(function() {
 
     }
 })
-
