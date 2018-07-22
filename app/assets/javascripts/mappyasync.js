@@ -70,8 +70,6 @@ function addLocationToindexedDB(name, type, latlng) {
     var store   = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
     store.put({name: name, type: type, location: {lat: latlng.lat, lng:latlng.lng}})
 }
-////////////////////////////////////////////////////////////
-
 
 
 // build map layers (dynamically) from CONST_MAP_LAYERS
@@ -85,7 +83,7 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     })
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
-////////////////////////////////////////////////////////////
+
 
 function initCustomButtons(map) {
     var sidebarButtonCustomControl = L.Control.extend({
@@ -109,7 +107,6 @@ function initCustomButtons(map) {
     });
     map.addControl(new sidebarButtonCustomControl());
 
-
     var handButtonCustomControl = L.Control.extend({
         options: {
             position: 'bottomright' 
@@ -130,7 +127,6 @@ function initCustomButtons(map) {
         }
     });
     map.addControl(new handButtonCustomControl());
-
 
     var pointerButtonCustomControl = L.Control.extend({
         options: {
@@ -154,6 +150,7 @@ function initCustomButtons(map) {
     map.addControl(new pointerButtonCustomControl());
 }
 
+
 function initSlideOutSidebar(map) {
     // add slideout sidebar
     // credit: https://github.com/Turbo87/leaflet-sidebar
@@ -165,6 +162,7 @@ function initSlideOutSidebar(map) {
     map.addControl(sidebar);
     sidebar.setContent('<center><b>MappyAsync Settings</b></center>');
 }
+
 
 function initGeocoder(map) {
     // add geocoder and plot marker
@@ -233,7 +231,8 @@ function mapGoToLatLng(map, latlng, name) {
 
 }
 
-// check this !!!
+
+// CHECK ON THIS!!!  GMH
 var marker = L.marker()
 
 
@@ -242,7 +241,7 @@ $(document).ready(function() {
 
     // define map position, zoom and layer
     var map = L.map('map', {
-        center: [CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX],
+        center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_DEFAULT_ZOOM,
         layers: [mapLayers[0]]
     });
