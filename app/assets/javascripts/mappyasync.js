@@ -4,6 +4,11 @@
 
 const CONST_OSM_REVERSE_GEOCODING = false; // GOOGLE if false
 
+// default map settings
+const CONST_MAP_DEFAULT_LONGITUDEX = -98.35
+const CONST_MAP_DEFAULT_LATITUDEY  =  39.5
+const CONST_MAP_DEFAULT_ZOOM       =   5
+
 // OSM reverse geocoder
 const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse"
 const CONST_OSM_FORMAT          = "jsonv2"
@@ -20,23 +25,23 @@ const CONST_MAP_LAYERS = [
         name: "Grayscale",
         url: "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoom: 5,
+        minZoom:  5,
         maxZoom: 17
     },
     {
         name: "Esri",
         url: 'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}, detectRetina=true',
         attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
-        minZoom: 5,
+        minZoom:  5,
         maxZoom: 17
     },
     {
         name: "OSM",
         url: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         attirbution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        minZoom: 5,
+        minZoom:  5,
         maxZoom: 17
-    }
+    },
 ];
 
 
@@ -92,8 +97,8 @@ $(document).ready(function() {
 
     // define map position, zoom and layer
     var map = L.map('map', {
-        center: [39.5, -98.35],
-        zoom: 5,
+        center: [CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX],
+        zoom: CONST_MAP_DEFAULT_ZOOM,
         layers: [mapLayers[0]]
     });
 
