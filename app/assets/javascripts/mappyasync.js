@@ -232,15 +232,18 @@ function mapGoToLatLng(map, latlng, name) {
 }
 
 
+
+
 // CHECK ON THIS!!!  GMH
 var marker = L.marker()
 
+var map;
 
 // here we go...
 $(document).ready(function() {
 
     // define map position, zoom and layer
-    var map = L.map('map', {
+    map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_DEFAULT_ZOOM,
         layers: [mapLayers[0]]
@@ -256,5 +259,25 @@ $(document).ready(function() {
     initSlideOutSidebar(map);
     initCustomButtons(map);
     initGeocoder(map)
- 
+
+
+
+
+
+
+    ////////////////////////////////////////////////////////////
+    // international space station
+    ////////////////////////////////////////////////////////////
+    var issIcon = new L.icon({ iconUrl: "/assets/42598-rocket-icon.png" })
+    var iss = new L.marker([0, 0], {icon: issIcon, title: "International Space Station"}).addTo(map);
+    function moveISS () {
+        $.getJSON('http://api.open-notify.org/iss-now.json?callback=?', function(data) {
+            iss.setLatLng([data['iss_position']['latitude'], data['iss_position']['longitude']])
+            // map.panTo([data['iss_position']['latitude'], data['iss_position']['longitude']], 16);
+        });
+        setTimeout(moveISS, 5000); 
+    }
+    moveISS()
+    ////////////////////////////////////////////////////////////
+
 })
