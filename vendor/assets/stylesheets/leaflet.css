@@ -344,16 +344,16 @@
 	}
 .leaflet-control-layers-toggle {
 	background-image: url(layers.png);
-	width: 26px;
-	height: 26px;
+	width: 36px;
+	height: 36px;
 	}
 .leaflet-retina .leaflet-control-layers-toggle {
 	background-image: url(layers-2x.png);
 	background-size: 26px 26px;
 	}
 .leaflet-touch .leaflet-control-layers-toggle {
-	width: 36px;
-	height: 36px;
+	width: 44px;
+	height: 44px;
 	}
 .leaflet-control-layers .leaflet-control-layers-list,
 .leaflet-control-layers-expanded .leaflet-control-layers-toggle {
@@ -499,9 +499,8 @@
 	}
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-	background: lightskyblue;
-	/* color: #333; */
-	color: white;
+	background: white;
+	color: #333;
 	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
 	}
 .leaflet-container a.leaflet-popup-close-button {
