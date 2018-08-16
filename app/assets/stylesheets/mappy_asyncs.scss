@@ -15,7 +15,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
     z-index:  800 !important;    
     box-shadow: 5px 5px 5px #888888;
 	background-position: 50% 50%;
-	display: block;
+    display: block;
+    box-shadow: 5px 5px 5px #888888 !important;
   }
 
 .sidebar-icon { background-image: url(settings-18-26.png); }
@@ -30,4 +31,34 @@ html, body { height: 100%; width: 100%; margin: 0px }
 .leaflet-touch .leaflet-control-layers-toggle {
 	width: 36px !important;
 	height: 36px !important;
+}
+
+/* leaflet css overrides */
+.leaflet-popup-content-wrapper {
+    background: #dbe7ea !important;
+    font-family: 'Times New Roman', Times, serif !important
+}
+  
+.leaflet-popup-tip {
+    background: #dbe7ea !important;
+}
+
+.leaflet-popup-content-wrapper {
+    box-shadow: 5px 5px 5px rgba(0,0,0,0.4) !important;
+}
+
+.leaflet-control-layers {
+    box-shadow: 5px 5px 5px #888888 !important;
+}
+
+.leaflet-control-geocoder {
+	// border-radius: 4px;
+	// background: white;
+	// min-width: 26px;
+    // min-height: 26px;
+    box-shadow: 5px 5px 5px #888888 !important;
+}
+
+.leaflet-sidebar {
+    box-shadow: 5px 5px 5px #888888 !important;
 }

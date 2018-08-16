@@ -2,24 +2,24 @@
 //     console.log("It works on each visit!")
 // })
 
+
+////////////////////////////////////////////////////////////
 const CONST_OSM_REVERSE_GEOCODING = true; // GOOGLE if false
 
-const CONST_MAP_CLICK_MIN_ZOOM = 12
+const CONST_MAP_CLICK_MIN_ZOOM = 12;
 
 // default map settings
-const CONST_MAP_DEFAULT_LONGITUDEX = -98.35
-const CONST_MAP_DEFAULT_LATITUDEY  =  39.5
-const CONST_MAP_DEFAULT_ZOOM       =   15
+// const CONST_MAP_DEFAULT_LONGITUDEX = -98.35;
+// const CONST_MAP_DEFAULT_LATITUDEY  =  39.5;
+const CONST_MAP_DEFAULT_LONGITUDEX = -95.99333;
+const CONST_MAP_DEFAULT_LATITUDEY  =  36.14974;
+const CONST_MAP_DEFAULT_ZOOM       =   15;
 
 // OSM reverse geocoder
-const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse"
-const CONST_OSM_FORMAT          = "jsonv2"
-const CONST_OSM_GEOCODE_ZOOM    = 18
-const CONST_OSM_ADDR_DETAILS    =  1
-
-// Google geocoder
-const CONST_GOOGLE_URL          = "https://maps.googleapis.com/maps/api/geocode/json"
-const CONST_GOOGLE_KEY          = "AIzaSyCOt29qPo0EJgvO57L_ci4-XSwqSWNQgFE"
+const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse";
+const CONST_OSM_FORMAT          = "jsonv2";
+const CONST_OSM_GEOCODE_ZOOM    = 18;
+const CONST_OSM_ADDR_DETAILS    =  1;
 
 // defintion of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -45,8 +45,26 @@ const CONST_MAP_LAYERS = [
         maxZoom: 17
     },
 ];
+////////////////////////////////////////////////////////////
 
 
+////////////////////////////////////////////////////////////
+function iss() {
+    // international space station
+    var issIcon = new L.icon({ iconUrl: "/assets/42598-rocket-icon.png" })
+    var iss     = new L.marker([0, 0], {icon: issIcon, title: "International Space Station"}).addTo(map);
+    function moveISS () {
+        $.getJSON('http://api.open-notify.org/iss-now.json?callback=?', function(data) {
+            iss.setLatLng([data['iss_position']['latitude'], data['iss_position']['longitude']])
+        });
+        setTimeout(moveISS, 5000); 
+    }
+    moveISS();
+}
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
 // prepare indexedDB 
 var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
 var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
@@ -70,8 +88,10 @@ function addLocationToindexedDB(name, type, latlng) {
     var store   = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
     store.put({name: name, type: type, location: {lat: latlng.lat, lng:latlng.lng}})
 }
+////////////////////////////////////////////////////////////
 
 
+////////////////////////////////////////////////////////////
 // build map layers (dynamically) from CONST_MAP_LAYERS
 var mapLayers = [];
 var baseMaps  = {};
@@ -83,8 +103,10 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
     })
     baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
 }
+////////////////////////////////////////////////////////////
 
 
+////////////////////////////////////////////////////////////
 function initCustomButton(map, classString, toolTip, fn) {
     
     var buttonCustomControl = L.Control.extend({
@@ -105,10 +127,10 @@ function initCustomButton(map, classString, toolTip, fn) {
     });
     map.addControl(new buttonCustomControl());
 }
+////////////////////////////////////////////////////////////
 
 
-
-
+////////////////////////////////////////////////////////////
 function initSlideOutSidebar(map) {
     // add slideout sidebar
     // credit: https://github.com/Turbo87/leaflet-sidebar
@@ -121,8 +143,10 @@ function initSlideOutSidebar(map) {
     map.addControl(sidebar);
     return sidebar;
 }
+////////////////////////////////////////////////////////////
 
 
+////////////////////////////////////////////////////////////
 function initGeocoder(map) {
     // add geocoder and plot marker
     // credit:  https://github.com/perliedman/leaflet-control-geocoder
@@ -143,12 +167,15 @@ function initGeocoder(map) {
         })
     });
 }
+////////////////////////////////////////////////////////////
 
 
+////////////////////////////////////////////////////////////
 // handle x,y coordinates from a map click or geocode
 function mapGoToLatLng(map, latlng, name) {
 
     var mapZoom = map.getZoom();
+    var zoom
     (mapZoom < CONST_MAP_CLICK_MIN_ZOOM) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = mapZoom
 
     map.flyTo(latlng, zoom)
@@ -158,25 +185,17 @@ function mapGoToLatLng(map, latlng, name) {
     map.addLayer(marker);
 
     if (name == "clicked location") {
-
-            var url, params
-
-            if (CONST_OSM_REVERSE_GEOCODING) {
-                url     = CONST_OSM_URL
-                params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
-            } else {
-                url     = CONST_GOOGLE_URL
-                params  = { latlng: latlng.lat + ',' + latlng.lng, key: CONST_GOOGLE_KEY }
-            }
+            // reverse geocode
+            var url     = CONST_OSM_URL
+            var params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
 
             $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
-                if (CONST_OSM_REVERSE_GEOCODING && !response.error) {
+                if (!response.error) {
                     marker.bindPopup(response.display_name).openPopup();
                     addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
-                } else if (response.status == "OK") {
-                    marker.bindPopup(response.results[0]["formatted_address"]).openPopup();
-                    addLocationToindexedDB(response.results[0]["formatted_address"], "click location", latlng);
-                };
+                } else {
+                    alert("Error: unable to reverse geocode location")
+                }
             });
 
     } else {
@@ -190,15 +209,14 @@ function mapGoToLatLng(map, latlng, name) {
     });
 
 }
-
-
-
+////////////////////////////////////////////////////////////
 
 // CHECK ON THIS!!!  GMH
 var marker = L.marker()
 
 // var map;
 
+////////////////////////////////////////////////////////////
 // here we go...
 $(document).ready(function() {
 
@@ -230,26 +248,8 @@ $(document).ready(function() {
         }
     }
     initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose )
-    // initCustomButtons(map);
 
 
 
-
-
-
-    ////////////////////////////////////////////////////////////
-    // international space station
-    ////////////////////////////////////////////////////////////
-    var issIcon = new L.icon({ iconUrl: "/assets/42598-rocket-icon.png" })
-    var iss = new L.marker([0, 0], {icon: issIcon, title: "International Space Station"}).addTo(map);
-    function moveISS () {
-        $.getJSON('http://api.open-notify.org/iss-now.json?callback=?', function(data) {
-            iss.setLatLng([data['iss_position']['latitude'], data['iss_position']['longitude']])
-            // map.panTo([data['iss_position']['latitude'], data['iss_position']['longitude']], 16);
-        });
-        setTimeout(moveISS, 5000); 
-    }
-    moveISS()
-    ////////////////////////////////////////////////////////////
 
 })
