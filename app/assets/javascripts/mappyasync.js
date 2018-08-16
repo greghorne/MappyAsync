@@ -2,14 +2,14 @@
 //     console.log("It works on each visit!")
 // })
 
-const CONST_OSM_REVERSE_GEOCODING = false; // GOOGLE if false
+const CONST_OSM_REVERSE_GEOCODING = true; // GOOGLE if false
 
 const CONST_MAP_CLICK_MIN_ZOOM = 12
 
 // default map settings
 const CONST_MAP_DEFAULT_LONGITUDEX = -98.35
 const CONST_MAP_DEFAULT_LATITUDEY  =  39.5
-const CONST_MAP_DEFAULT_ZOOM       =   5
+const CONST_MAP_DEFAULT_ZOOM       =   15
 
 // OSM reverse geocoder
 const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse"
@@ -85,70 +85,28 @@ for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
 }
 
 
-function initCustomButtons(map) {
-    var sidebarButtonCustomControl = L.Control.extend({
+function initCustomButton(map, classString, toolTip, fn) {
+    
+    var buttonCustomControl = L.Control.extend({
         options: {
-            position: 'bottomright' 
+            position: 'topright' 
         },
 
         onAdd: function(map) {
-            var container = L.DomUtil.create('div', 'button-tool button-sidebar leaflet-bar leaflet-control leaflet-control-custom');
-            container.onclick = function(){
-                if (sidebar.isVisible()) {
-                    sidebar.hide();
-                } else {
-                    setTimeout(function () {
-                        sidebar.show();
-                    }, 500);
-                }
+            var container = L.DomUtil.create('div', classString + ' sidebar-icon button-custom cursor-pointer leaflet-bar');
+            container.title   = toolTip
+            container.onclick = function(e){ 
+                console.log("click..."); 
+                L.DomEvent.stopPropagation(e);
+                fn();
             }
             return container;
         }
     });
-    map.addControl(new sidebarButtonCustomControl());
-
-    var handButtonCustomControl = L.Control.extend({
-        options: {
-            position: 'bottomright' 
-        },
-        
-        onAdd: function(map) {
-            var container = L.DomUtil.create('div', 'button-tool button-hand leaflet-bar leaflet-control leaflet-control-custom');
-            container.onclick = function(){
-                if (sidebar.isVisible()) {
-                    sidebar.hide();
-                } else {
-                    setTimeout(function () {
-                        sidebar.show();
-                    }, 500);
-                }
-            }
-            return container;
-        }
-    });
-    map.addControl(new handButtonCustomControl());
-
-    var pointerButtonCustomControl = L.Control.extend({
-        options: {
-            position: 'bottomright' 
-        },
-        
-        onAdd: function(map) {
-            var container = L.DomUtil.create('div', 'button-tool button-pointer leaflet-bar leaflet-control-custom');
-            container.onclick = function(){
-                if (sidebar.isVisible()) {
-                    sidebar.hide();
-                } else {
-                    setTimeout(function () {
-                        sidebar.show();
-                    }, 500);
-                }
-            }
-            return container;
-        }
-    });
-    map.addControl(new pointerButtonCustomControl());
+    map.addControl(new buttonCustomControl());
 }
+
+
 
 
 function initSlideOutSidebar(map) {
@@ -159,8 +117,9 @@ function initSlideOutSidebar(map) {
         closeButton: true,
         autoPan: false
     });
-    map.addControl(sidebar);
     sidebar.setContent('<center><b>MappyAsync Settings</b></center>');
+    map.addControl(sidebar);
+    return sidebar;
 }
 
 
@@ -170,7 +129,8 @@ function initGeocoder(map) {
     var geocoder = L.Control.geocoder({
         defaultMarkGeocode: false,
         collapsed: true,
-        position: 'topright'
+        position: 'topright',
+        tooltip: "Geocode"
     }).on('markgeocode', function(e) { 
         mapGoToLatLng(map, e.geocode.center, e.geocode.name) 
     }).addTo(map)
@@ -237,13 +197,13 @@ function mapGoToLatLng(map, latlng, name) {
 // CHECK ON THIS!!!  GMH
 var marker = L.marker()
 
-var map;
+// var map;
 
 // here we go...
 $(document).ready(function() {
 
     // define map position, zoom and layer
-    map = L.map('map', {
+    var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_DEFAULT_ZOOM,
         layers: [mapLayers[0]]
@@ -256,9 +216,21 @@ $(document).ready(function() {
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
     // initialization of map controls
-    initSlideOutSidebar(map);
-    initCustomButtons(map);
+    var sidebar = initSlideOutSidebar(map)
     initGeocoder(map)
+
+    function sidebarOpenClose() { 
+        console.log("fn...")
+        if (sidebar.isVisible()) {
+            sidebar.hide();
+        } else {
+            setTimeout(function () {
+                sidebar.show();
+            }, 500);
+        }
+    }
+    initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose )
+    // initCustomButtons(map);
 
 
 
