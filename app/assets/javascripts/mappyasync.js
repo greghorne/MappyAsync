@@ -4,8 +4,6 @@
 
 
 ////////////////////////////////////////////////////////////
-const CONST_OSM_REVERSE_GEOCODING = true; // GOOGLE if false
-
 const CONST_MAP_CLICK_MIN_ZOOM = 15;
 
 // default map settings
@@ -15,11 +13,15 @@ const CONST_MAP_DEFAULT_LONGITUDEX = -95.99333;
 const CONST_MAP_DEFAULT_LATITUDEY  =  36.14974;
 const CONST_MAP_DEFAULT_ZOOM       =   15;
 
+
 // OSM reverse geocoder
 const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse";
 const CONST_OSM_FORMAT          = "jsonv2";
 const CONST_OSM_GEOCODE_ZOOM    = 15;
 const CONST_OSM_ADDR_DETAILS    =  1;
+
+const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
+const CONST_MARKER_ISS = new L.Icon({ iconUrl: "/assets/42598-rocket-icon.png", iconsize: [48, 48], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-52] });
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -65,22 +67,6 @@ const CONST_MAP_LAYERS = [
 
 
 ////////////////////////////////////////////////////////////
-function iss() {
-    // international space station
-    var issIcon = new L.icon({ iconUrl: "/assets/42598-rocket-icon.png" })
-    var iss     = new L.marker([0, 0], {icon: issIcon, title: "International Space Station"}).addTo(map);
-    function moveISS () {
-        $.getJSON('http://api.open-notify.org/iss-now.json?callback=?', function(data) {
-            iss.setLatLng([data['iss_position']['latitude'], data['iss_position']['longitude']])
-        });
-        setTimeout(moveISS, 5000); 
-    }
-    moveISS();
-}
-////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////
 // prepare indexedDB 
 var deleteIndexedDB = window.indexedDB.deleteDatabase("MappyAsync")
 var indexedDB       = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
@@ -103,6 +89,25 @@ function addLocationToindexedDB(name, type, latlng) {
     var tx      = db.transaction(["LocationStore"], "readwrite");
     var store   = tx.objectStore("LocationStore", {keyPath: "id", autoIncrement: true});
     store.put({name: name, type: type, location: {lat: latlng.lat, lng:latlng.lng}})
+}
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
+function iss(map) {
+    // international space station
+    try {
+        var issIcon = new L.icon({ iconUrl: "/assets/42598-rocket-icon.png" })
+        var iss     = new L.marker([0, 0], {icon: CONST_MARKER_ISS, title: "International Space Station"}).addTo(map);
+        function moveISS () {
+            $.getJSON('http://api.open-notify.org/iss-now.json?callback=?', function(data) {
+                iss.setLatLng([data['iss_position']['latitude'], data['iss_position']['longitude']])
+                iss.bindPopup("International Space Station", {autoPan: false}).openPopup();
+            });
+            setTimeout(moveISS, 5000); 
+        }
+        moveISS();
+    } catch {}
 }
 ////////////////////////////////////////////////////////////
 
@@ -149,14 +154,14 @@ function initCustomButton(map, classString, toolTip, fn) {
 function initSlideOutSidebar(map) {
     // add slideout sidebar
     // credit: https://github.com/Turbo87/leaflet-sidebar
-    var sidebar = L.control.sidebar('sidebar', {
+    gSidebar = L.control.sidebar('sidebar', {
         position: 'left',
         closeButton: true,
         autoPan: false
     });
-    sidebar.setContent('<center><b>MappyAsync Settings</b></center>');
-    map.addControl(sidebar);
-    return sidebar;
+    gSidebar.setContent('<center><b>MappyAsync Settings</b></center>');
+    map.addControl(gSidebar);
+    return gSidebar;
 }
 ////////////////////////////////////////////////////////////
 
@@ -167,9 +172,8 @@ function initGeocoder(map) {
     // credit:  https://github.com/perliedman/leaflet-control-geocoder
     var geocoder = L.Control.geocoder({
         defaultMarkGeocode: false,
-        collapsed: true,
-        position: 'topright',
-        tooltip: "Geocode"
+        collapsed:          true,
+        position:           'topright'
     }).on('markgeocode', function(e) { 
         mapGoToLatLng(map, e.geocode.center, e.geocode.name) 
     }).addTo(map)
@@ -195,9 +199,9 @@ function mapGoToLatLng(map, latlng, name) {
 
     map.flyTo(latlng, zoom)
 
-    if (marker) map.removeLayer(marker);
-    marker = new L.marker(latlng, { draggable: true, autopan: true })
-    map.addLayer(marker);
+    if (gMarker) map.removeLayer(gMarker);
+    gMarker = new L.marker(latlng, { draggable: true, autopan: true })
+    map.addLayer(gMarker);
 
     if (name == "clicked location") {
             // reverse geocode
@@ -206,7 +210,7 @@ function mapGoToLatLng(map, latlng, name) {
 
             $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
                 if (!response.error) {
-                    marker.bindPopup(response.display_name).openPopup();
+                    gMarker.bindPopup(response.display_name).openPopup();
                     addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
                 } else {
                     alert("Error: unable to reverse geocode location")
@@ -214,22 +218,29 @@ function mapGoToLatLng(map, latlng, name) {
             });
 
     } else {
-        marker.bindPopup(name).openPopup();
+        gMarker.bindPopup(name).openPopup();
         addLocationToindexedDB(name, "geocoded location", latlng)
     }
 
     // CHECK ON THIS!!!  GMH
-    marker.on('dragend', function(event) {
+    gMarker.on('dragend', function(event) {
         mapGoToLatLng(map, event.target._latlng, "clicked location")
     });
 
 }
 ////////////////////////////////////////////////////////////
 
-// CHECK ON THIS!!!  GMH
-var marker = L.marker()
 
-// var map;
+////////////////////////////////////////////////////////////
+function sidebarOpenClose() { 
+    if (gSidebar.isVisible()) { gSidebar.hide() } 
+    else { setTimeout(function () { gSidebar.show() }, 500) }
+}
+////////////////////////////////////////////////////////////
+
+
+var gMarker = L.marker();
+var gSidebar;
 
 ////////////////////////////////////////////////////////////
 // here we go...
@@ -249,21 +260,9 @@ $(document).ready(function() {
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
     // initialization of map controls
-    var sidebar = initSlideOutSidebar(map)
+    var gSidebar = initSlideOutSidebar(map)
     initGeocoder(map)
+    initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
 
-    function sidebarOpenClose() { 
-        if (sidebar.isVisible()) {
-            sidebar.hide();
-        } else {
-            setTimeout(function () {
-                sidebar.show();
-            }, 500);
-        }
-    }
-    initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose )
-
-
-
-
+    // iss(map);
 })
