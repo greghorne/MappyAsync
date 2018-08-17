@@ -17,7 +17,7 @@ const CONST_MAP_DEFAULT_ZOOM       =   15;
 // OSM reverse geocoder
 const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse";
 const CONST_OSM_FORMAT          = "jsonv2";
-const CONST_OSM_GEOCODE_ZOOM    = 15;
+const CONST_OSM_GEOCODE_ZOOM    = 18;
 const CONST_OSM_ADDR_DETAILS    =  1;
 
 const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
@@ -113,28 +113,12 @@ function iss(map) {
 
 
 ////////////////////////////////////////////////////////////
-// build map layers (dynamically) from CONST_MAP_LAYERS
-var mapLayers = [];
-var baseMaps  = {};
-for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
-    mapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { 
-        attribution: CONST_MAP_LAYERS[n].attribution, 
-        minZoon: CONST_MAP_LAYERS[n].minZoom, 
-        maxZoom: CONST_MAP_LAYERS[n].maxZoom 
-    })
-    baseMaps[[CONST_MAP_LAYERS[n].name]] = mapLayers[n];
-}
-////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////
 function initCustomButton(map, classString, toolTip, fn) {
     
     var buttonCustomControl = L.Control.extend({
         options: {
             position: 'topright' 
         },
-
         onAdd: function(map) {
             var container = L.DomUtil.create('div', classString + ' sidebar-icon button-custom cursor-pointer leaflet-bar');
             container.title   = toolTip
@@ -189,6 +173,20 @@ function initGeocoder(map) {
 ////////////////////////////////////////////////////////////
 
 
+function formatAddress(location) {
+
+    var strAddress
+
+    if (location.address.neighbourhood) strAddress = location.display_name.replace(" " + location.address.neighbourhood + ",", "") + "</br>(" + location.address.neighbourhood + ")"
+    else strAddress = location.display_name
+
+    strAddress = "<center>" + strAddress.replace(", United States of America", "") + "</center>"
+    if (location.address.house_number && location.address.road) {
+        strAddress = strAddress.replace(location.address.house_number + ",", location.address.house_number)
+    }
+    return strAddress
+}
+
 ////////////////////////////////////////////////////////////
 // handle x,y coordinates from a map click or geocode
 function mapGoToLatLng(map, latlng, name) {
@@ -204,21 +202,22 @@ function mapGoToLatLng(map, latlng, name) {
     map.addLayer(gMarker);
 
     if (name == "clicked location") {
-            // reverse geocode
-            var url     = CONST_OSM_URL
-            var params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
+        // reverse geocode
+        var url     = CONST_OSM_URL
+        var params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
 
-            $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
-                if (!response.error) {
-                    gMarker.bindPopup(response.display_name).openPopup();
-                    addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
-                } else {
-                    alert("Error: unable to reverse geocode location")
-                }
-            });
+        $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
+            var address = formatAddress(response)
 
+            if (!response.error) {
+                gMarker.bindPopup(address).openPopup();
+                addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
+            } else {
+                alert("Error: unable to reverse geocode location")
+            }
+        });
     } else {
-        gMarker.bindPopup(name).openPopup();
+        gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
         addLocationToindexedDB(name, "geocoded location", latlng)
     }
 
@@ -239,28 +238,42 @@ function sidebarOpenClose() {
 ////////////////////////////////////////////////////////////
 
 
-var gMarker = L.marker();
+var gMapLayers = [];
+var gBaseMaps  = {};
+var gMarker    = L.marker();
 var gSidebar;
+
+
+////////////////////////////////////////////////////////////
+// build map layers (dynamically) from CONST_MAP_LAYERS
+(function() {
+    for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
+        gMapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { 
+            attribution: CONST_MAP_LAYERS[n].attribution, 
+            minZoon: CONST_MAP_LAYERS[n].minZoom, 
+            maxZoom: CONST_MAP_LAYERS[n].maxZoom 
+        })
+        gBaseMaps[[CONST_MAP_LAYERS[n].name]] = gMapLayers[n];
+    }
+})()
+////////////////////////////////////////////////////////////
+
 
 ////////////////////////////////////////////////////////////
 // here we go...
 $(document).ready(function() {
 
-    // define map position, zoom and layer
+    // initialize map
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom: CONST_MAP_DEFAULT_ZOOM,
-        layers: [mapLayers[0]]
+        layers: [gMapLayers[0]]
     });
 
-    // add all map layers to layer control
-    L.control.layers(baseMaps).addTo(map)
-
-    // add scalebar
-    L.control.scale({imperial: true, metric: false}).addTo(map)
-
     // initialization of map controls
-    var gSidebar = initSlideOutSidebar(map)
+    L.control.layers(gBaseMaps).addTo(map)
+    L.control.scale({imperial: true, metric: false}).addTo(map)
+    gSidebar = initSlideOutSidebar(map)
     initGeocoder(map)
     initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
 
