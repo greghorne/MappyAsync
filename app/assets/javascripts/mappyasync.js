@@ -143,7 +143,7 @@ function initSlideOutSidebar(map) {
         closeButton: true,
         autoPan: false
     });
-    gSidebar.setContent('<center><b>MappyAsync Settings</b></center>');
+    // gSidebar.setContent('<center><b>MappyAsync Settings</b></center>');
     map.addControl(gSidebar);
     return gSidebar;
 }
@@ -233,7 +233,14 @@ function mapGoToLatLng(map, latlng, name) {
 ////////////////////////////////////////////////////////////
 function sidebarOpenClose() { 
     if (gSidebar.isVisible()) { gSidebar.hide() } 
-    else { setTimeout(function () { gSidebar.show() }, 500) }
+    else { setTimeout(function () { 
+        gSidebar.show(); 
+        console.log($('#sidebar').text()) 
+        console.log($('#greg').text())
+        console.log(gSidebar._container.innerHTML)
+        $('#greg').text("This is Fumie")
+        }, 500) 
+    }
 }
 ////////////////////////////////////////////////////////////
 
@@ -277,5 +284,42 @@ $(document).ready(function() {
     initGeocoder(map)
     initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
 
+
+    var html;
+    html = '<center><b>Mappy Async</b></center>'
+    html += "<div class='test'>this is a div</div>"
+
+    html = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
+    <h2 style='color: #2e6c80; text-align: left;'>What does it do?</h2>\
+    <p>Given a polygon on the map, calculate demographics within the polygon.</p>\
+    <p>Allow for the creation of isochrones (drive-time polygons)</p>\
+    <p>Isochrone creation using Bing Maps and Route360</p>\
+    <h2 style='color: #2e6c80; text-align: left;'>Tech Stack?</h2>\
+    <p>Rails 5.2, PostgreSQL/PostGIS, Bing Maps API, Route360 API</p>\
+    <p>Drive time polygon (minutes): \
+    <select idl='minutes>\
+        <option value='1'>1 minutes</option>\
+        <option value='3'>3 minutes</option>\
+        <option value='5'>5 minutes</option>\
+        <option value='8'>8 minutes</option>\
+        <option value='8'>10 minutes</option>\
+    </select></p>"
+
+    gSidebar.setContent(html);
+
+
+
+
     // iss(map);
 })
+
+
+
+
+
+
+
+
+
+
+
