@@ -13,10 +13,9 @@ html, body { height: 100%; width: 100%; margin: 0px }
     background-repeat: no-repeat;
     background-position: center;
     z-index:  800 !important;    
-    box-shadow: 5px 5px 5px #888888;
 	background-position: 50% 50%;
     display: block;
-    box-shadow: 5px 5px 5px #888888 !important;
+    box-shadow: 5px 5px 5px #332c2c !important;
   }
 
 .sidebar-icon { background-image: url(settings-18-26.png); }
@@ -36,7 +35,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
 /* leaflet css overrides */
 .leaflet-popup-content-wrapper {
     background: #dbe7ea !important;
-    font-family: 'Times New Roman', Times, serif !important
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif !important
 }
   
 .leaflet-popup-tip {
@@ -48,7 +47,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
 }
 
 .leaflet-control-layers {
-    box-shadow: 5px 5px 5px #888888 !important;
+    box-shadow: 5px 5px 5px #332c2c !important;
 }
 
 .leaflet-control-geocoder {
@@ -56,9 +55,13 @@ html, body { height: 100%; width: 100%; margin: 0px }
 	// background: white;
 	// min-width: 26px;
     // min-height: 26px;
-    box-shadow: 5px 5px 5px #888888 !important;
+    box-shadow: 5px 5px 5px #332c2c !important;
 }
 
 .leaflet-sidebar {
-    box-shadow: 5px 5px 5px #888888 !important;
+    box-shadow: 5px 5px 5px #332c2c !important;
+}
+
+.leaflet-control-zoom {
+    box-shadow: 5px 5px 5px #332c2c !important;
 }
