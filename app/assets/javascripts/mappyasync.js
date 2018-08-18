@@ -208,23 +208,47 @@ function mapGoToLatLng(map, latlng, name) {
 
         $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
             var address = formatAddress(response)
-
+console.log(response)
             if (!response.error) {
                 gMarker.bindPopup(address).openPopup();
                 addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
             } else {
                 alert("Error: unable to reverse geocode location")
             }
-        });
+            calcualteDemographics({ lat: response.lat, lng: response.lng})
+        })
+        
     } else {
         gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
         addLocationToindexedDB(name, "geocoded location", latlng)
+        calculateDemographics(latlng)
     }
 
     // CHECK ON THIS!!!  GMH
     gMarker.on('dragend', function(event) {
         mapGoToLatLng(map, event.target._latlng, "clicked location")
+        calculateDemographics(event.target._latlng);
     });
+
+}
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
+function calcualteDemographics(latlng) {
+
+    var minutes = $('#minutes').val()
+    var bing    = $('#bing').is(":checked");
+    var targomo = $('#targomo').is(":checked");
+
+    console.log(minutes)
+    console.log(bing)
+    console.log(targomo)
+
+    if (!bing && !targomo) {
+        if (!gSidebar.isVisible()) gSidebar.show()
+        setTimeout(function() { alert("At lease one drive-time polygon provider must be checked") }, 1000)
+    }
 
 }
 ////////////////////////////////////////////////////////////
@@ -235,9 +259,9 @@ function sidebarOpenClose() {
     if (gSidebar.isVisible()) { gSidebar.hide() } 
     else { setTimeout(function () { 
         gSidebar.show(); 
-        console.log($('#sidebar').text()) 
-        console.log($('#greg').text())
-        console.log(gSidebar._container.innerHTML)
+        // console.log($('#sidebar').text()) 
+        // console.log($('#greg').text())
+        // console.log(gSidebar._container.innerHTML)
         $('#greg').text("This is Fumie")
         }, 500) 
     }
@@ -285,32 +309,37 @@ $(document).ready(function() {
     initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
 
 
-    var html;
-    html = '<center><b>Mappy Async</b></center>'
-    html += "<div class='test'>this is a div</div>"
 
-    html = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
-    <h2 style='color: #2e6c80; text-align: left;'>What does it do?</h2>\
+    var html = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
+    <h3 style='color: #2e6c80; text-align: left;'>What does it do?</h2>\
     <p>Given a polygon on the map, calculate demographics within the polygon.</p>\
     <p>Allow for the creation of isochrones (drive-time polygons)</p>\
-    <p>Isochrone creation using Bing Maps and Route360</p>\
-    <h2 style='color: #2e6c80; text-align: left;'>Tech Stack?</h2>\
-    <p>Rails 5.2, PostgreSQL/PostGIS, Bing Maps API, Route360 API</p>\
-    <p>Drive time polygon (minutes): \
-    <select idl='minutes>\
-        <option value='1'>1 minutes</option>\
+    </br>\
+    <hr size='3' aligh='center' color='#5e9ca0'>\
+    <h3 style='color: #5e9ca0; text-align: center;'>Settings</hr>\
+    <hr size='3' align='center' color='#5e9ca0'>\
+    <center><p>Drive time polygon (minutes):</center> \
+    <center><select id='minutes'>\
         <option value='3'>3 minutes</option>\
         <option value='5'>5 minutes</option>\
         <option value='8'>8 minutes</option>\
         <option value='8'>10 minutes</option>\
-    </select></p>"
+    </select></p></center>\
+    <hr size='3' align='center' color='#5e9ca0'>\
+    <center><p>Drive-time polygon provider(s):</center> \
+    <center><label><input type='checkbox' id='bing'> Bing Maps API</label></center>\
+    <center><label><input type='checkbox' id='targomo'> Targomo API</label></center>\
+    <hr size='3' align='center' color='#5e9ca0'>"
+    
+    // https://www.targomo.com
+    // https://msdn.microsoft.com/en-us/library/ff701713.aspx
 
     gSidebar.setContent(html);
 
 
 
 
-    // iss(map);
+    iss(map);
 })
 
 
