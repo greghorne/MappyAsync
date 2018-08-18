@@ -66,3 +66,7 @@ html, body { height: 100%; width: 100%; margin: 0px }
 .leaflet-control-zoom {
     box-shadow: 5px 5px 5px #332c2c !important;
 }
+
+.leaflet-control-geocoder-icon {
+	background-image: url(search-9-26.png) !important;
+}
