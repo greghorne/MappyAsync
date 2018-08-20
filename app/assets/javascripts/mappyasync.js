@@ -17,7 +17,7 @@ const CONST_MAP_DEFAULT_ZOOM       =   15;
 // OSM reverse geocoder
 const CONST_OSM_URL             = "https://nominatim.openstreetmap.org/reverse";
 const CONST_OSM_FORMAT          = "jsonv2";
-const CONST_OSM_GEOCODE_ZOOM    = 18;
+const CONST_OSM_GEOCODE_ZOOM    = 18;   // 18 = building level; 
 const CONST_OSM_ADDR_DETAILS    =  1;
 
 const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
@@ -102,7 +102,7 @@ function iss(map) {
         function moveISS () {
             $.getJSON('http://api.open-notify.org/iss-now.json?callback=?', function(data) {
                 iss.setLatLng([data['iss_position']['latitude'], data['iss_position']['longitude']])
-                iss.bindPopup("International Space Station", {autoPan: false}).openPopup();
+                iss.bindPopup("International Space Station", {autoPan: false});
             });
             setTimeout(moveISS, 5000); 
         }
@@ -206,16 +206,17 @@ function mapGoToLatLng(map, latlng, name) {
         var url     = CONST_OSM_URL
         var params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
 
-        $.ajax({ type: "GET", url: url, data: params}).success(function(response) {
+        $.ajax({ type: "GET", url: url, data: params,}).success(function(response) {
+            console.log(response)
             var address = formatAddress(response)
-console.log(response)
+
             if (!response.error) {
                 gMarker.bindPopup(address).openPopup();
                 addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
             } else {
                 alert("Error: unable to reverse geocode location")
             }
-            calcualteDemographics({ lat: response.lat, lng: response.lng})
+            calculateDemographics({ lat: response.lat, lng: response.lng})
         })
         
     } else {
@@ -235,19 +236,20 @@ console.log(response)
 
 
 ////////////////////////////////////////////////////////////
-function calcualteDemographics(latlng) {
+function calculateDemographics(latlng) {
 
     var minutes = $('#minutes').val()
     var bing    = $('#bing').is(":checked");
     var targomo = $('#targomo').is(":checked");
 
-    console.log(minutes)
-    console.log(bing)
-    console.log(targomo)
+    console.log(minutes + " minutes")
+    console.log(bing + " bing")
+    console.log(targomo + " tarmogo")
 
     if (!bing && !targomo) {
         if (!gSidebar.isVisible()) gSidebar.show()
-        setTimeout(function() { alert("At lease one drive-time polygon provider must be checked") }, 1000)
+        // setTimeout(function() { alert("At lease one drive-time polygon provider must be checked") }, 1000)
+        $("#dialog").dialog("open")
     }
 
 }
@@ -257,14 +259,11 @@ function calcualteDemographics(latlng) {
 ////////////////////////////////////////////////////////////
 function sidebarOpenClose() { 
     if (gSidebar.isVisible()) { gSidebar.hide() } 
-    else { setTimeout(function () { 
-        gSidebar.show(); 
-        // console.log($('#sidebar').text()) 
-        // console.log($('#greg').text())
-        // console.log(gSidebar._container.innerHTML)
-        $('#greg').text("This is Fumie")
-        }, 500) 
-    }
+    // else { 
+    //     setTimeout(function () { 
+    //         gSidebar.show(); 
+    //     }, 500)
+    
 }
 ////////////////////////////////////////////////////////////
 
@@ -308,6 +307,10 @@ $(document).ready(function() {
     initGeocoder(map)
     initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
 
+    // $("#flip").click(function() {
+    //     $("#panel").slideToggle("slow")
+    // })
+
 
 
     var html = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
@@ -327,19 +330,24 @@ $(document).ready(function() {
     </select></p></center>\
     <hr size='3' align='center' color='#5e9ca0'>\
     <center><p>Drive-time polygon provider(s):</center> \
-    <center><label><input type='checkbox' id='bing'> Bing Maps API</label></center>\
-    <center><label><input type='checkbox' id='targomo'> Targomo API</label></center>\
+    <center><label><input type='checkbox' id='bing' checked='true'> Bing Maps API</label></center>\
+    <center><label><input type='checkbox' id='targomo' checked='true'> Targomo API</label></center>\
     <hr size='3' align='center' color='#5e9ca0'>"
     
-    // https://www.targomo.com
-    // https://msdn.microsoft.com/en-us/library/ff701713.aspx
+
 
     gSidebar.setContent(html);
 
+    $("#dialog").dialog({
+        autoOpen: true,
+        modal: true
+    });
+    $("#dialog").css('z-index', 900)
+    console.log($("#dialog"))
+    console.log($("#dialog").css('z-index'))
+    // $("#dialog").dialog("open")
 
-
-
-    iss(map);
+    // iss(map);
 })
 
 
