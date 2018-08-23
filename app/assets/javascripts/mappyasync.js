@@ -249,7 +249,7 @@ function calculateDemographics(latlng) {
     if (!bing && !targomo) {
         if (!gSidebar.isVisible()) gSidebar.show()
         // setTimeout(function() { alert("At lease one drive-time polygon provider must be checked") }, 1000)
-        $("#dialog").dialog("open")
+        // $("#dialog").dialog("open")
     }
 
 }
@@ -259,10 +259,10 @@ function calculateDemographics(latlng) {
 ////////////////////////////////////////////////////////////
 function sidebarOpenClose() { 
     if (gSidebar.isVisible()) { gSidebar.hide() } 
-    // else { 
-    //     setTimeout(function () { 
-    //         gSidebar.show(); 
-    //     }, 500)
+    else { 
+        setTimeout(function () { 
+            gSidebar.show(); 
+        }, 500)
     
 }
 ////////////////////////////////////////////////////////////
