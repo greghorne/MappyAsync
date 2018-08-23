@@ -339,13 +339,14 @@ $(document).ready(function() {
     gSidebar.setContent(html);
 
     $("#dialog").dialog({
-        autoOpen: true,
+        autoOpen: false,
         modal: true
     });
-    $("#dialog").css('z-index', 900)
+    // $("#dialog").css('z-index', 900)
     console.log($("#dialog"))
     console.log($("#dialog").css('z-index'))
-    // $("#dialog").dialog("open")
+    $("#dialog").dialog("open")
+    console.log($("#dialog").dialog("isOpen"))
 
     // iss(map);
 })
