@@ -1,15 +1,19 @@
-# MappyAysnc
+# MappyAsync
+
+*This Project is under development.*
 
 Scope:  Display a map with geospatial analytics.
-
+#
 Goal:   Use extensive asynchronous coding wherever possible.
-
+#
 Comment: I don't think making everything asynchronous is necessarily the ideal implementation for this app.  However, I look forward to learning much more about asynchronous applications by working on this project.  There will be a number of pieces to this project mostly in the form of API's. 
 
-Refer to https://github.com/greghorne/MappyAysnc/projects/1 for progress on this project.
+#
 
 
 Tech Stack:
+
+	* Leaflet v1.3.3
 
     * Rails 5.2.0
     * ruby 2.5.1p57 (2018-03-29 revision 63029) [i686-linux]
@@ -22,4 +26,4 @@ Tech Stack:
                     Release:        14.04
                     Codename:       trusty
 
-    * Deployment Heroku & RaspberryPi
+    * Deployment Heroku & RaspberryPi (PostgreSQL DB Server)
