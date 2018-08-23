@@ -343,10 +343,10 @@ $(document).ready(function() {
         modal: true
     });
     // $("#dialog").css('z-index', 900)
-    console.log($("#dialog"))
-    console.log($("#dialog").css('z-index'))
-    $("#dialog").dialog("open")
-    console.log($("#dialog").dialog("isOpen"))
+    // console.log($("#dialog"))
+    // console.log($("#dialog").css('z-index'))
+    // $("#dialog").dialog("open")
+    // console.log($("#dialog").dialog("isOpen"))
 
     // iss(map);
 })
