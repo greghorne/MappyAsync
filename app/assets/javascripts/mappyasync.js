@@ -286,7 +286,7 @@ var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</
                         <option value='3'>3 minutes</option>\
                         <option value='5'>5 minutes</option>\
                         <option value='8'>8 minutes</option>\
-                        <option value='8'>10 minutes</option>\
+                        <option value='10'>10 minutes</option>\
                     </select></p></center>\
                     <hr size='3' align='center' color='#5e9ca0'>\
                     <center><p>Drive-time polygon provider(s):</center>\
