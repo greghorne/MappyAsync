@@ -273,12 +273,34 @@ var gMapLayers = [];
 var gBaseMaps  = {};
 var gMarker    = L.marker();
 var gSidebar;
+var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
+                    <h3 style='color: #2e6c80; text-align: left;'>What does it do?</h2>\
+                    <p>Given a polygon on the map, calculate demographics within the polygon.</p>\
+                    <p>Allow for the creation of isochrones (drive-time polygons)</p>\
+                    </br>\
+                    <hr size='3' align='center' color='#5e9ca0'>\
+                    <h3 style='color: #5e9ca0; text-align: center;'>Settings</hr>\
+                    <hr size='3' align='center' color='#5e9ca0'>\
+                    <center><p>Drive time polygon (minutes):</center> \
+                    <center><select id='minutes'>\
+                        <option value='3'>3 minutes</option>\
+                        <option value='5'>5 minutes</option>\
+                        <option value='8'>8 minutes</option>\
+                        <option value='8'>10 minutes</option>\
+                    </select></p></center>\
+                    <hr size='3' align='center' color='#5e9ca0'>\
+                    <center><p>Drive-time polygon provider(s):</center>\
+                    <center><label><input type='checkbox' id='bing' checked='true'> Bing Maps API</label></center>\
+                    <center><label><input type='checkbox' id='targomo' checked='true'> Targomo API</label></center>\
+                    <hr size='3' align='center' color='#5e9ca0'>";
 
 
 ////////////////////////////////////////////////////////////
 // build map layers (dynamically) from CONST_MAP_LAYERS
 (function() {
+ 
     for (n = 0; n < CONST_MAP_LAYERS.length; n++) {
+        
         gMapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { 
             attribution: CONST_MAP_LAYERS[n].attribution, 
             minZoon: CONST_MAP_LAYERS[n].minZoom, 
@@ -293,7 +315,7 @@ var gSidebar;
 ////////////////////////////////////////////////////////////
 // here we go...
 $(document).ready(function() {
-
+    console.log("trace ready")
     // initialize map
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
@@ -314,30 +336,11 @@ $(document).ready(function() {
 
 
 
-    var html = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
-    <h3 style='color: #2e6c80; text-align: left;'>What does it do?</h2>\
-    <p>Given a polygon on the map, calculate demographics within the polygon.</p>\
-    <p>Allow for the creation of isochrones (drive-time polygons)</p>\
-    </br>\
-    <hr size='3' aligh='center' color='#5e9ca0'>\
-    <h3 style='color: #5e9ca0; text-align: center;'>Settings</hr>\
-    <hr size='3' align='center' color='#5e9ca0'>\
-    <center><p>Drive time polygon (minutes):</center> \
-    <center><select id='minutes'>\
-        <option value='3'>3 minutes</option>\
-        <option value='5'>5 minutes</option>\
-        <option value='8'>8 minutes</option>\
-        <option value='8'>10 minutes</option>\
-    </select></p></center>\
-    <hr size='3' align='center' color='#5e9ca0'>\
-    <center><p>Drive-time polygon provider(s):</center> \
-    <center><label><input type='checkbox' id='bing' checked='true'> Bing Maps API</label></center>\
-    <center><label><input type='checkbox' id='targomo' checked='true'> Targomo API</label></center>\
-    <hr size='3' align='center' color='#5e9ca0'>"
+
     
 
 
-    gSidebar.setContent(html);
+    gSidebar.setContent(gSidebarHTML);
 
     // $("#dialog").dialog({
     //     autoOpen: false,
