@@ -207,7 +207,7 @@ function mapGoToLatLng(map, latlng, name) {
         var params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
 
         $.ajax({ type: "GET", url: url, data: params,}).success(function(response) {
-            console.log(response)
+
             var address = formatAddress(response)
 
             if (!response.error) {
@@ -248,7 +248,7 @@ function calculateDemographics(latlng) {
 
     if (!bing && !targomo) {
         if (!gSidebar.isVisible()) gSidebar.show()
-        // setTimeout(function() { alert("At lease one drive-time polygon provider must be checked") }, 1000)
+        // setTimeout(function() { alert("At leaset one drive-time polygon provider must be checked") }, 1000)
         // $("#dialog").dialog("open")
     }
 
@@ -315,7 +315,7 @@ var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</
 ////////////////////////////////////////////////////////////
 // here we go...
 $(document).ready(function() {
-    console.log("trace ready")
+
     // initialize map
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
