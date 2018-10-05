@@ -5,4 +5,6 @@ Rails.application.routes.draw do
 
   get "/mapclick" => "mappy_asyncs#mapclick"
 
+  get "/check_xy_in_usa" => "mappy_asyncs#check_xy_in_usa"
+
 end

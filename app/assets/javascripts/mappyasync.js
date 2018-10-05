@@ -11,7 +11,7 @@ const CONST_MAP_CLICK_MIN_ZOOM = 15;
 // const CONST_MAP_DEFAULT_LATITUDEY  =  39.5;
 const CONST_MAP_DEFAULT_LONGITUDEX = -95.99333;
 const CONST_MAP_DEFAULT_LATITUDEY  =  36.14974;
-const CONST_MAP_DEFAULT_ZOOM       =   15;
+const CONST_MAP_DEFAULT_ZOOM       =   14;
 
 
 // OSM reverse geocoder
@@ -23,7 +23,7 @@ const CONST_OSM_ADDR_DETAILS    =  1;
 const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
 const CONST_MARKER_ISS = new L.Icon({ iconUrl: "/assets/42598-rocket-icon.png", iconsize: [48, 48], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-52] });
 
-const CONST_MESSAGE_PROVIDER_CHECKBOX = "At least one 'Drive-time polygon providers' must be selected."
+const CONST_MESSAGE_PROVIDER_CHECKBOX = "At least one drive-time polygon provider must be selected."
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -193,10 +193,18 @@ function formatAddress(location) {
 // handle x,y coordinates from a map click or geocode
 function mapGoToLatLng(map, latlng, name) {
 
+    $.ajax({
+        url: "/check_xy_in_usa.json",
+        type: "GET",
+        data: { lat: latlng.lat, lng: latlng.lng }
+    }).done(function (results) {
+
+    })
+
     var mapZoom = map.getZoom();
     var zoom;
-    ($('#clickAutoZoom').is(":checked")) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = mapZoom
 
+    ($('#clickAutoZoom').is(":checked")) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = mapZoom
     map.flyTo(latlng, zoom)
 
     if (gMarker) map.removeLayer(gMarker);
@@ -272,9 +280,12 @@ function calculateDemographics(latlng) {
     var bing    = $('#bing').is(":checked");
     var targomo = $('#targomo').is(":checked");
 
-    console.log(minutes + " minutes")
-    console.log(bing + " bing")
-    console.log(targomo + " tarmogo")
+    // console.log(minutes + " minutes")
+    // console.log(bing + " bing")
+    // console.log(targomo + " tarmogo")
+
+    // console.log("calculate demographics")
+
 }
 ////////////////////////////////////////////////////////////
 
@@ -307,12 +318,7 @@ function textControl(map, displayText) {
             var container;
 
             container = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-            // container = L.DomUtil.create('div', 'highlight-background custom-control', L.DomUtil.get('map'));
             container.innerHTML = "<center>" + displayText + "</center>"
-
-            // top-center the control on the map
-            // container.style.position = 'absolute'
-            // container.style.right    = Math.round(($(window).width() - CONST_MAP_TEXT_CONTROL_WIDTH) / 2) + 'px'
 
             gContainer = container  // need this reference for later
 
@@ -388,32 +394,25 @@ $(document).ready(function() {
     // initialization of map controls
     L.control.layers(gBaseMaps).addTo(map)
     L.control.scale({imperial: true, metric: false}).addTo(map)
-    gSidebar = initSlideOutSidebar(map)
+
     initGeocoder(map)
+
+    gSidebar = initSlideOutSidebar(map)
     initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
-
-    // $("#flip").click(function() {
-    //     $("#panel").slideToggle("slow")
-    // })
-
-
-
-
-    
-
-
     gSidebar.setContent(gSidebarHTML);
 
-    // $("#dialog").dialog({
-    //     autoOpen: false,
-    //     modal: true
-    // });
-    // $("#dialog").css('z-index', 900)
-    // console.log($("#dialog"))
-    // console.log($("#dialog").css('z-index'))
-    // $("#dialog").dialog("open")
-    // console.log($("#dialog").dialog("isOpen"))
-
-    // iss(map);
+    iss(map);
 })
 
+
+
+// create or replace function z_tl_2016_us_state(IN double precision, IN double precision) 
+// returns table(gid integer) as $$
+// BEGIN
+// SELECT gid from tl_2016_us_state
+// WHERE ST_Intersects( tl_2016_us_state.geom, ST_GeomFromText('POINT(' || $1 || ' ' || $2 || ')', 4269));
+// END;
+// $$
+// LANGUAGE plpgsql STABLE NOT LEAKPROOF
+// COST 100
+// ROWS 1;
