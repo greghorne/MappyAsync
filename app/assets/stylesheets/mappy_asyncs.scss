@@ -70,3 +70,19 @@ html, body { height: 100%; width: 100%; margin: 0px }
 .leaflet-control-geocoder-icon {
 	background-image: url(search-9-26.png) !important;
 }
+
+.highlight-background-message {
+    /* background-color: #dbe7ea !important; */
+    background-color: rgb(238, 241, 11) !important;
+    color: rgb(0, 0, 0)
+}
+
+.custom-control-message {
+    width: 380px;
+    height: 45px;
+    // margin-right:  10px !important;
+    // margin-bottom: 20px !important;
+    z-index:  800;    
+    font-size: 1.25em !important;
+    font-family: 'Times New Roman', Times, serif;
+}
