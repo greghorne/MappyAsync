@@ -194,8 +194,8 @@ function formatAddress(location) {
 function mapGoToLatLng(map, latlng, name) {
 
     var mapZoom = map.getZoom();
-    var zoom
-    (mapZoom < CONST_MAP_CLICK_MIN_ZOOM) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = mapZoom
+    var zoom;
+    ($('#clickAutoZoom').is(":checked")) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = mapZoom
 
     map.flyTo(latlng, zoom)
 
@@ -353,8 +353,9 @@ var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</
                     <center><p>Drive-time polygon providers:</center>\
                     <center><label><input type='checkbox' id='bing' checked='true'> Bing Maps API</label></center>\
                     <center><label><input type='checkbox' id='targomo' checked='true'> Targomo API</label></center>\
+                    <hr size='3' align='center' color='#5e9ca0'>\
+                    <center><label><input type='checkbox' id='clickAutoZoom' checked='true'> Auto-zoom on map click</label></center>\
                     <hr size='3' align='center' color='#5e9ca0'>";
-
 
 ////////////////////////////////////////////////////////////
 // build map layers (dynamically) from CONST_MAP_LAYERS
