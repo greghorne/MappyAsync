@@ -23,7 +23,7 @@ const CONST_OSM_ADDR_DETAILS    =  1;
 const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
 const CONST_MARKER_ISS = new L.Icon({ iconUrl: "/assets/42598-rocket-icon.png", iconsize: [48, 48], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-52] });
 
-const CONST_MESSAGE_PROVIDER_CHECKBOX = "Error: At least one 'Drive-time polygon provider' must be selected."
+const CONST_MESSAGE_PROVIDER_CHECKBOX = "At least one 'Drive-time polygon providers' must be selected."
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
