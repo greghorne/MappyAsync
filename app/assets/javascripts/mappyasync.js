@@ -194,7 +194,7 @@ function formatAddress(location) {
 function mapGoToLatLng(map, latlng, name) {
 
     $.ajax({
-        url: "/check_xy_in_usa.json",
+        url: "/check_valid_xy.json",
         type: "GET",
         data: { lat: latlng.lat, lng: latlng.lng }
     }).done(function (results) {

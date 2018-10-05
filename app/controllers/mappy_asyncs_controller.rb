@@ -15,10 +15,12 @@ class MappyAsyncsController < ApplicationController
 
     end
 
-    def check_xy_in_usa
+    def check_valid_xy
         lat = params[:lat]
         lng = params[:lng]
         puts lat + " " + lng
+        result = check_xy(lat, lng)
+        puts result
     end
 
 end
