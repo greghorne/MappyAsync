@@ -23,6 +23,8 @@ const CONST_OSM_ADDR_DETAILS    =  1;
 const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
 const CONST_MARKER_ISS = new L.Icon({ iconUrl: "/assets/42598-rocket-icon.png", iconsize: [48, 48], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-52] });
 
+const CONST_MESSAGE_PROVIDER_CHECKBOX = "Warning: At least one 'Drive-time polygon provider' must be selected"
+
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
@@ -216,21 +218,49 @@ function mapGoToLatLng(map, latlng, name) {
             } else {
                 alert("Error: unable to reverse geocode location")
             }
-            calculateDemographics({ lat: response.lat, lng: response.lng})
-        })
+            if (checkBoxChecked(map)) { calculateDemographics({ lat: response.lat, lng: response.lng}) }
+        })  
         
     } else {
         gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
         addLocationToindexedDB(name, "geocoded location", latlng)
-        calculateDemographics(latlng)
+        if (checkBoxChecked(map)) { calculateDemographics(latlng) }
     }
 
     // CHECK ON THIS!!!  GMH
     gMarker.on('dragend', function(event) {
         mapGoToLatLng(map, event.target._latlng, "clicked location")
-        calculateDemographics(event.target._latlng);
+        if (checkBoxChecked(map)) { calculateDemographics(event.target._latlng); }
     });
 
+}
+////////////////////////////////////////////////////////////
+
+
+var gTextControlMessage;
+
+
+////////////////////////////////////////////////////////////
+function checkBoxChecked(map) {
+    
+    var bing    = $('#bing').is(":checked");
+    var targomo = $('#targomo').is(":checked");
+
+    if (!bing && !targomo) {    
+
+        if (!gTextControlMessage) { gTextControlMessage = textControl(map, CONST_MESSAGE_PROVIDER_CHECKBOX) }
+        map.addControl(gTextControlMessage)
+
+        setTimeout(function() {
+            map.removeControl(gTextControlMessage)
+        }, 10000)
+
+        if (!gSidebar.isVisible()) gSidebar.show()
+
+        return false;
+    }
+
+    return true;
 }
 ////////////////////////////////////////////////////////////
 
@@ -245,12 +275,6 @@ function calculateDemographics(latlng) {
     console.log(minutes + " minutes")
     console.log(bing + " bing")
     console.log(targomo + " tarmogo")
-
-    if (!bing && !targomo) {
-        if (!gSidebar.isVisible()) gSidebar.show()
-        // setTimeout(function() { alert("At leaset one drive-time polygon provider must be checked") }, 1000)
-        // $("#dialog").dialog("open")
-    }
 
 }
 ////////////////////////////////////////////////////////////
@@ -267,6 +291,44 @@ function sidebarOpenClose() {
     }
 }
 ////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+// display text informaiton in textControl
+function textControl(map, displayText) {
+
+    // if (gTextControlMessage) map.removeControl(gTextControlMessage)  // remove control if it already exists
+
+    var textCustomControl = L.Control.extend({
+        options: {
+            position: 'bottomright' 
+        },
+
+        onAdd: function() {
+            var container;
+
+            container = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
+            // container = L.DomUtil.create('div', 'highlight-background custom-control', L.DomUtil.get('map'));
+            container.innerHTML = "<center>" + displayText + "</center>"
+
+            // top-center the control on the map
+            // container.style.position = 'absolute'
+            // container.style.right    = Math.round(($(window).width() - CONST_MAP_TEXT_CONTROL_WIDTH) / 2) + 'px'
+
+            gContainer = container  // need this reference for later
+
+            return container;
+        },
+
+        onRemove: function(map) { }
+    });
+
+    myControl = new textCustomControl();
+    map.addControl(myControl);
+
+    return myControl
+}
+////////////////////////////////////////////////////////////////
 
 
 var gMapLayers = [];
@@ -354,14 +416,4 @@ $(document).ready(function() {
 
     // iss(map);
 })
-
-
-
-
-
-
-
-
-
-
 
