@@ -23,7 +23,7 @@ const CONST_OSM_ADDR_DETAILS    =  1;
 const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
 const CONST_MARKER_ISS = new L.Icon({ iconUrl: "/assets/42598-rocket-icon.png", iconsize: [48, 48], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-52] });
 
-const CONST_MESSAGE_PROVIDER_CHECKBOX = "Warning: At least one 'Drive-time polygon provider' must be selected"
+const CONST_MESSAGE_PROVIDER_CHECKBOX = "Error: At least one 'Drive-time polygon provider' must be selected."
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -275,7 +275,6 @@ function calculateDemographics(latlng) {
     console.log(minutes + " minutes")
     console.log(bing + " bing")
     console.log(targomo + " tarmogo")
-
 }
 ////////////////////////////////////////////////////////////
 
@@ -336,7 +335,7 @@ var gBaseMaps  = {};
 var gMarker    = L.marker();
 var gSidebar;
 var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
-                    <h3 style='color: #2e6c80; text-align: left;'>What does it do?</h2>\
+                    <h3 style='color: #5e9ca0; text-align: left;'>What does it do?</h2>\
                     <p>Given a polygon on the map, calculate demographics within the polygon.</p>\
                     <p>Allow for the creation of isochrones (drive-time polygons)</p>\
                     </br>\
@@ -351,7 +350,7 @@ var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</
                         <option value='10'>10 minutes</option>\
                     </select></p></center>\
                     <hr size='3' align='center' color='#5e9ca0'>\
-                    <center><p>Drive-time polygon provider(s):</center>\
+                    <center><p>Drive-time polygon providers:</center>\
                     <center><label><input type='checkbox' id='bing' checked='true'> Bing Maps API</label></center>\
                     <center><label><input type='checkbox' id='targomo' checked='true'> Targomo API</label></center>\
                     <hr size='3' align='center' color='#5e9ca0'>";
