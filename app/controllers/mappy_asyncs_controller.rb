@@ -18,8 +18,10 @@ class MappyAsyncsController < ApplicationController
     def check_valid_xy
         lat = params[:lat]
         lng = params[:lng]
+        puts
+        puts "check_valid_xy =====>"
         puts lat + " " + lng
-        result = check_xy(lat, lng)
+        result = MappyAsyncMain::check_xy(lat, lng)
         puts result
     end
 
