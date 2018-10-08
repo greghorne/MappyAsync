@@ -24,6 +24,7 @@ const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
 const CONST_MARKER_ISS = new L.Icon({ iconUrl: "/assets/42598-rocket-icon.png", iconsize: [48, 48], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-52] });
 
 const CONST_MESSAGE_PROVIDER_CHECKBOX = "At least one drive-time polygon provider must be selected."
+const CONST_MESSAGE_INVALID_XY        = "Calculations are limited to within U.S. borders."
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -198,8 +199,14 @@ function mapGoToLatLng(map, latlng, name) {
         type: "GET",
         data: { lat: latlng.lat, lng: latlng.lng }
     }).done(function (response) {
-        console.log("===========")
-        console.log(response)
+        if (!response.valid) {
+            if (!gTextControlMessage2) { gTextControlMessage2 = textControl2(map, CONST_MESSAGE_INVALID_XY) }
+            map.addControl(gTextControlMessage2)
+    
+            setTimeout(function() {
+                map.removeControl(gTextControlMessage2)
+            }, 10000)
+        }
     })
 
     var mapZoom = map.getZoom();
@@ -247,6 +254,7 @@ function mapGoToLatLng(map, latlng, name) {
 
 
 var gTextControlMessage;
+var gTextControlMessage2;
 
 
 ////////////////////////////////////////////////////////////
@@ -322,6 +330,37 @@ function textControl(map, displayText) {
             container.innerHTML = "<center>" + displayText + "</center>"
 
             gContainer = container  // need this reference for later
+
+            return container;
+        },
+
+        onRemove: function(map) { }
+    });
+
+    myControl = new textCustomControl();
+    map.addControl(myControl);
+
+    return myControl
+}
+////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+// display text informaiton in textControl
+function textControl2(map, displayText) {
+
+    var textCustomControl = L.Control.extend({
+        options: {
+            position: 'bottomright' 
+        },
+
+        onAdd: function() {
+            var container;
+
+            container = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
+            container.innerHTML = "<center>" + displayText + "</center>"
+
+            gContainer2 = container  // need this reference for later
 
             return container;
         },
