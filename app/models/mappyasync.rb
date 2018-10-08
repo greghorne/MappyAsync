@@ -5,7 +5,7 @@ require "pg"
 
 # $redis = Redis::Namespace.new("redis_hostnames", :redis => Redis.new)
 
-class MappyAsyncMain < ApplicationModel
+class MappyAsyncMain
 
   def self.get_conn
     host      = ENV['RAILS_HOST']
@@ -27,9 +27,19 @@ class MappyAsyncMain < ApplicationModel
   end
 
 
+end
+
+class Mappyasync
+
+  def initialize(name)
+    @name = name
+    puts name
+  end
+
   def check_xy
-    puts "check_xy"
-    conn = get_conn
+    puts "In Model check_xy =======>"
+    return "yes......"
+    # conn = get_conn
     # result = conn.query()
   end
 
