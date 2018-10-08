@@ -16,16 +16,8 @@ class MappyAsyncsController < ApplicationController
     end
 
     def check_valid_xy
-        lat = params[:lat]
-        lng = params[:lng]
-        puts
-        # puts "check_valid_xy"
-        puts lat + " " + lng
-        puts
-        # result = MappyAsyncMain::check_xy(lat, lng)
-        # result = ApplicationModel.MappyAsyncMain.new
-        @result = Mappyasync.new("greg")
-        puts @result
+        testCall = Mappyasync.new(params[:lat], params[:lng])
+        puts testCall.check_valid
     end
 
 end
