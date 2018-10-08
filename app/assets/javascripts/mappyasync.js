@@ -199,13 +199,13 @@ function mapGoToLatLng(map, latlng, name) {
         type: "GET",
         data: { lat: latlng.lat, lng: latlng.lng }
     }).done(function (response) {
-        if (!response.valid) {
-            if (!gTextControlMessage2) { gTextControlMessage2 = textControl2(map, CONST_MESSAGE_INVALID_XY) }
-            map.addControl(gTextControlMessage2)
-    
-            setTimeout(function() {
-                map.removeControl(gTextControlMessage2)
-            }, 10000)
+
+        if (!response.valid) {  
+            // display x,y out of bounds message
+            displayTextControlMsg(map, gTextControlMessage2)
+            // if (!gTextControlMessage2) gTextControlMessage2 = textControl2(map, CONST_MESSAGE_INVALID_XY)
+            // map.addControl(gTextControlMessage2)
+            // setTimeout(function() { map.removeControl(gTextControlMessage2) }, 10000)
         }
     })
 
@@ -253,8 +253,12 @@ function mapGoToLatLng(map, latlng, name) {
 ////////////////////////////////////////////////////////////
 
 
-var gTextControlMessage;
-var gTextControlMessage2;
+////////////////////////////////////////////////////////////
+function displayTextControlMsg(map, control) {
+    map.addControl(control)
+    setTimeout(function() { map.removeControl(control) }, 10000)
+}
+////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////////
@@ -264,16 +268,9 @@ function checkBoxChecked(map) {
     var targomo = $('#targomo').is(":checked");
 
     if (!bing && !targomo) {    
-
-        if (!gTextControlMessage) { gTextControlMessage = textControl(map, CONST_MESSAGE_PROVIDER_CHECKBOX) }
-        map.addControl(gTextControlMessage)
-
-        setTimeout(function() {
-            map.removeControl(gTextControlMessage)
-        }, 10000)
+        displayTextControlMsg(map, gTextControlMessage)
 
         if (!gSidebar.isVisible()) gSidebar.show()
-
         return false;
     }
 
@@ -313,65 +310,39 @@ function sidebarOpenClose() {
 
 
 //////////////////////////////////////////////////////////////////////
-// display text informaiton in textControl
-function textControl(map, displayText) {
-
-    // if (gTextControlMessage) map.removeControl(gTextControlMessage)  // remove control if it already exists
+// create text control
+function textControl(displayText) {
 
     var textCustomControl = L.Control.extend({
-        options: {
-            position: 'bottomright' 
-        },
+        options: { position: 'bottomright' },
 
         onAdd: function() {
-            var container;
-
-            container = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
+            var container = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
             container.innerHTML = "<center>" + displayText + "</center>"
-
-            gContainer = container  // need this reference for later
-
             return container;
         },
-
-        onRemove: function(map) { }
     });
-
-    myControl = new textCustomControl();
-    map.addControl(myControl);
-
-    return myControl
+    
+    return new textCustomControl();
 }
 ////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////
-// display text informaiton in textControl
-function textControl2(map, displayText) {
+// create text control
+function textControl2(displayText) {
 
     var textCustomControl = L.Control.extend({
-        options: {
-            position: 'bottomright' 
-        },
+        options: { position: 'bottomright' },
 
         onAdd: function() {
-            var container;
-
-            container = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
+            var container = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
             container.innerHTML = "<center>" + displayText + "</center>"
-
-            gContainer2 = container  // need this reference for later
-
             return container;
         },
-
-        onRemove: function(map) { }
     });
 
-    myControl = new textCustomControl();
-    map.addControl(myControl);
-
-    return myControl
+    return new textCustomControl();
 }
 ////////////////////////////////////////////////////////////////
 
@@ -420,6 +391,10 @@ var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</
 ////////////////////////////////////////////////////////////
 
 
+var gTextControlMessage;
+var gTextControlMessage2;
+
+
 ////////////////////////////////////////////////////////////
 // here we go...
 $(document).ready(function() {
@@ -432,6 +407,8 @@ $(document).ready(function() {
     });
 
     // initialization of map controls
+    gTextControlMessage   = textControl(CONST_MESSAGE_PROVIDER_CHECKBOX)
+    gTextControlMessage2  = textControl(CONST_MESSAGE_INVALID_XY)
     L.control.layers(gBaseMaps).addTo(map)
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
