@@ -15,9 +15,10 @@ class MappyAsyncsController < ApplicationController
 
     end
 
+    # see if given x,y falls within U.S. boundaries
     def check_valid_xy
-        testCall = Mappyasync.new(params[:lat], params[:lng])
-        puts testCall.check_valid
+        valid_xy = Mappyasync.new(params[:lat], params[:lng]).check_valid
+        render :json => { valid: valid_xy } 
     end
 
 end

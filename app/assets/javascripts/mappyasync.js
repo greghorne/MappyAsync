@@ -197,8 +197,9 @@ function mapGoToLatLng(map, latlng, name) {
         url: "/check_valid_xy.json",
         type: "GET",
         data: { lat: latlng.lat, lng: latlng.lng }
-    }).done(function (results) {
-
+    }).done(function (response) {
+        console.log("===========")
+        console.log(response)
     })
 
     var mapZoom = map.getZoom();
