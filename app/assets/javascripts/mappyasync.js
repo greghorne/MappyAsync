@@ -209,10 +209,8 @@ function mapGoToLatLng(map, latlng, name) {
             return;
         } else {
 
-            var zoom;
-
-            ($('#clickAutoZoom').is(":checked")) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = map.getZoom();
-            map.flyTo(latlng, zoom)
+            // pan & zoom to new location
+            ($('#clickAutoZoom').is(":checked")) ? map.flyTo(latlng, CONST_MAP_CLICK_MIN_ZOOM) : map.flyTo(latlng, map.getZoom())
 
             map.removeLayer(gMarker);
             gMarker = new L.marker(latlng, { draggable: true, autopan: true })
@@ -264,10 +262,10 @@ function displayTextControlMsg(map, control) {
 ////////////////////////////////////////////////////////////
 function checkBoxChecked(map) {
     
-    var bing    = $('#bing').is(":checked");
-    var targomo = $('#targomo').is(":checked");
+    var bBing    = $('#bing').is(":checked");
+    var bTargomo = $('#targomo').is(":checked");
 
-    if (!bing && !targomo) {    
+    if (!bBing && !bTargomo) {    
         displayTextControlMsg(map, gTextControlMessage)
 
         if (!gSidebar.isVisible()) gSidebar.show()
@@ -327,6 +325,7 @@ function textControl(displayText) {
 ////////////////////////////////////////////////////////////////
 
 
+////////////////////// global variables ////////////////////////
 var gMapLayers   = [];
 var gBaseMaps    = {};
 var gMarker      = L.marker();
@@ -358,6 +357,7 @@ var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</
 var gTextControlMessage;
 var gTextControlMessage2;
 var gTextControlMessage3;
+////////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////////
@@ -388,18 +388,22 @@ $(document).ready(function() {
         layers: [ gMapLayers[0] ]
     });
 
+    /////////////////////////////////
     // initialization of map controls
     gTextControlMessage   = textControl(CONST_MESSAGE_PROVIDER_CHECKBOX)
     gTextControlMessage2  = textControl(CONST_MESSAGE_INVALID_XY)
     gTextControlMessage3  = textControl(CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
+
     L.control.layers(gBaseMaps).addTo(map)
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
     initGeocoder(map)
 
     initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
+
     gSidebar = initSlideOutSidebar(map)
     gSidebar.setContent(gSidebarHTML);
+    /////////////////////////////////
 
     iss(map);
 })
