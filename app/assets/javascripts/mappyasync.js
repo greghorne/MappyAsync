@@ -23,8 +23,9 @@ const CONST_OSM_ADDR_DETAILS    =  1;
 const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
 const CONST_MARKER_ISS = new L.Icon({ iconUrl: "/assets/42598-rocket-icon.png", iconsize: [48, 48], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-52] });
 
-const CONST_MESSAGE_PROVIDER_CHECKBOX = "At least one drive-time polygon provider must be selected."
-const CONST_MESSAGE_INVALID_XY        = "Calculations are limited to within U.S. borders."
+const CONST_MESSAGE_PROVIDER_CHECKBOX         = "At least one drive-time polygon provider must be selected."
+const CONST_MESSAGE_INVALID_XY                = "Calculations are limited to within U.S. borders."
+const CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE = "Unable to reverse geocode location."
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
@@ -123,7 +124,7 @@ function initCustomButton(map, classString, toolTip, fn) {
             position: 'topright' 
         },
         onAdd: function(map) {
-            var container = L.DomUtil.create('div', classString + ' sidebar-icon button-custom cursor-pointer leaflet-bar');
+            var container     = L.DomUtil.create('div', classString + ' sidebar-icon button-custom cursor-pointer leaflet-bar');
             container.title   = toolTip
             container.onclick = function(e){ 
                 L.DomEvent.stopPropagation(e);
@@ -139,14 +140,13 @@ function initCustomButton(map, classString, toolTip, fn) {
 
 ////////////////////////////////////////////////////////////
 function initSlideOutSidebar(map) {
-    // add slideout sidebar
     // credit: https://github.com/Turbo87/leaflet-sidebar
     gSidebar = L.control.sidebar('sidebar', {
-        position: 'left',
+        position:    'left',
         closeButton: true,
-        autoPan: false
+        autoPan:     false
     });
-    // gSidebar.setContent('<center><b>MappyAsync Settings</b></center>');
+
     map.addControl(gSidebar);
     return gSidebar;
 }
@@ -167,15 +167,15 @@ function initGeocoder(map) {
 
     // add map click event
     map.on('click', function(event) {
-        $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}
-              ).success(function() { 
-                mapGoToLatLng(map, event.latlng, "clicked location") 
+        $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}).success(function() { 
+            mapGoToLatLng(map, event.latlng, "clicked location") 
         })
     });
 }
 ////////////////////////////////////////////////////////////
 
 
+////////////////////////////////////////////////////////////
 function formatAddress(location) {
 
     var strAddress
@@ -189,13 +189,15 @@ function formatAddress(location) {
     }
     return strAddress
 }
+////////////////////////////////////////////////////////////
+
 
 ////////////////////////////////////////////////////////////
 // handle x,y coordinates from a map click or geocode
 function mapGoToLatLng(map, latlng, name) {
 
     $.ajax({
-        url: "/check_valid_xy.json",
+        url:  "/check_valid_xy.json",
         type: "GET",
         data: { lat: latlng.lat, lng: latlng.lng }
     }).done(function (response) {
@@ -203,52 +205,50 @@ function mapGoToLatLng(map, latlng, name) {
         if (!response.valid) {  
             // display x,y out of bounds message
             displayTextControlMsg(map, gTextControlMessage2)
-            // if (!gTextControlMessage2) gTextControlMessage2 = textControl2(map, CONST_MESSAGE_INVALID_XY)
-            // map.addControl(gTextControlMessage2)
-            // setTimeout(function() { map.removeControl(gTextControlMessage2) }, 10000)
-        }
-    })
+            setTimeout(function() { map.removeLayer(gMarker); }, 3000)
+            return;
+        } else {
 
-    var mapZoom = map.getZoom();
-    var zoom;
+            var zoom;
 
-    ($('#clickAutoZoom').is(":checked")) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = mapZoom
-    map.flyTo(latlng, zoom)
+            ($('#clickAutoZoom').is(":checked")) ? zoom = CONST_MAP_CLICK_MIN_ZOOM : zoom = map.getZoom();
+            map.flyTo(latlng, zoom)
 
-    if (gMarker) map.removeLayer(gMarker);
-    gMarker = new L.marker(latlng, { draggable: true, autopan: true })
-    map.addLayer(gMarker);
+            map.removeLayer(gMarker);
+            gMarker = new L.marker(latlng, { draggable: true, autopan: true })
+            map.addLayer(gMarker);
 
-    if (name == "clicked location") {
-        // reverse geocode
-        var url     = CONST_OSM_URL
-        var params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
+            if (name == "clicked location") {
+                // reverse geocode
+                var url     = CONST_OSM_URL
+                var params  = { format: CONST_OSM_FORMAT, lat: latlng.lat, lon: latlng.lng, zoom: CONST_OSM_GEOCODE_ZOOM, addressdetails: CONST_OSM_ADDR_DETAILS }
 
-        $.ajax({ type: "GET", url: url, data: params,}).success(function(response) {
+                $.ajax({ type: "GET", url: url, data: params,}).success(function(response) {
 
-            var address = formatAddress(response)
+                    var address = formatAddress(response)
 
-            if (!response.error) {
-                gMarker.bindPopup(address).openPopup();
-                addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
+                    if (!response.error) {
+                        gMarker.bindPopup(address).openPopup();
+                        addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
+                    } else { 
+                        displayTextControlMsg(map, gTextControlMessage3)
+                    }
+                    if (checkBoxChecked(map)) { calculateDemographics({ lat: response.lat, lng: response.lng}) }
+                })  
+                
             } else {
-                alert("Error: unable to reverse geocode location")
+                gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
+                addLocationToindexedDB(name, "geocoded location", latlng)
+                if (checkBoxChecked(map)) { calculateDemographics(latlng) }
             }
-            if (checkBoxChecked(map)) { calculateDemographics({ lat: response.lat, lng: response.lng}) }
-        })  
-        
-    } else {
-        gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
-        addLocationToindexedDB(name, "geocoded location", latlng)
-        if (checkBoxChecked(map)) { calculateDemographics(latlng) }
-    }
 
-    // CHECK ON THIS!!!  GMH
-    gMarker.on('dragend', function(event) {
-        mapGoToLatLng(map, event.target._latlng, "clicked location")
-        if (checkBoxChecked(map)) { calculateDemographics(event.target._latlng); }
+            // CHECK ON THIS!!!  GMH
+            gMarker.on('dragend', function(event) {
+                mapGoToLatLng(map, event.target._latlng, "clicked location")
+                if (checkBoxChecked(map)) { calculateDemographics(event.target._latlng); }
+            });
+        }
     });
-
 }
 ////////////////////////////////////////////////////////////
 
@@ -298,29 +298,28 @@ function calculateDemographics(latlng) {
 
 ////////////////////////////////////////////////////////////
 function sidebarOpenClose() { 
-    if (gSidebar.isVisible()) { gSidebar.hide() } 
-    else { 
+    if (gSidebar.isVisible()) { 
+        gSidebar.hide() 
+    } else { 
         setTimeout(function () { 
             gSidebar.show(); 
         }, 500)
-    
     }
 }
 ////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////
-// create text control
+// create text control (leaflet map control that just has text in it)
 function textControl(displayText) {
 
     var textCustomControl = L.Control.extend({
         options: { position: 'bottomright' },
-
         onAdd: function() {
-            var container = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
+            var container       = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
             container.innerHTML = "<center>" + displayText + "</center>"
             return container;
-        },
+        }
     });
     
     return new textCustomControl();
@@ -328,28 +327,9 @@ function textControl(displayText) {
 ////////////////////////////////////////////////////////////////
 
 
-//////////////////////////////////////////////////////////////////////
-// create text control
-function textControl2(displayText) {
-
-    var textCustomControl = L.Control.extend({
-        options: { position: 'bottomright' },
-
-        onAdd: function() {
-            var container = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-            container.innerHTML = "<center>" + displayText + "</center>"
-            return container;
-        },
-    });
-
-    return new textCustomControl();
-}
-////////////////////////////////////////////////////////////////
-
-
-var gMapLayers = [];
-var gBaseMaps  = {};
-var gMarker    = L.marker();
+var gMapLayers   = [];
+var gBaseMaps    = {};
+var gMarker      = L.marker();
 var gSidebar;
 var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
                     <h3 style='color: #5e9ca0; text-align: left;'>What does it do?</h2>\
@@ -368,11 +348,17 @@ var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</
                     </select></p></center>\
                     <hr size='3' align='center' color='#5e9ca0'>\
                     <center><p>Drive-time polygon providers:</center>\
-                    <center><label><input type='checkbox' id='bing' checked='true'> Bing Maps API</label></center>\
-                    <center><label><input type='checkbox' id='targomo' checked='true'> Targomo API</label></center>\
+                        <center><label><input type='checkbox' id='bing' checked='true'> Bing Maps API</label></center>\
+                        <center><label><input type='checkbox' id='targomo' checked='true'> Targomo API</label></center>\
                     <hr size='3' align='center' color='#5e9ca0'>\
-                    <center><label><input type='checkbox' id='clickAutoZoom' checked='true'> Auto-zoom on map click</label></center>\
+                        <center><label><input type='checkbox' id='clickAutoZoom' checked='true'> Auto-zoom on map click</label></center>\
                     <hr size='3' align='center' color='#5e9ca0'>";
+
+// leaflet map controls that contain a text message
+var gTextControlMessage;
+var gTextControlMessage2;
+var gTextControlMessage3;
+
 
 ////////////////////////////////////////////////////////////
 // build map layers (dynamically) from CONST_MAP_LAYERS
@@ -382,17 +368,13 @@ var gSidebarHTML = "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</
         
         gMapLayers[n] = L.tileLayer(CONST_MAP_LAYERS[n].url, { 
             attribution: CONST_MAP_LAYERS[n].attribution, 
-            minZoon: CONST_MAP_LAYERS[n].minZoom, 
-            maxZoom: CONST_MAP_LAYERS[n].maxZoom 
+            minZoon:     CONST_MAP_LAYERS[n].minZoom, 
+            maxZoom:     CONST_MAP_LAYERS[n].maxZoom 
         })
         gBaseMaps[[CONST_MAP_LAYERS[n].name]] = gMapLayers[n];
     }
 })()
 ////////////////////////////////////////////////////////////
-
-
-var gTextControlMessage;
-var gTextControlMessage2;
 
 
 ////////////////////////////////////////////////////////////
@@ -402,20 +384,21 @@ $(document).ready(function() {
     // initialize map
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
-        zoom: CONST_MAP_DEFAULT_ZOOM,
-        layers: [gMapLayers[0]]
+        zoom:     CONST_MAP_DEFAULT_ZOOM,
+        layers: [ gMapLayers[0] ]
     });
 
     // initialization of map controls
     gTextControlMessage   = textControl(CONST_MESSAGE_PROVIDER_CHECKBOX)
     gTextControlMessage2  = textControl(CONST_MESSAGE_INVALID_XY)
+    gTextControlMessage3  = textControl(CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
     L.control.layers(gBaseMaps).addTo(map)
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
     initGeocoder(map)
 
-    gSidebar = initSlideOutSidebar(map)
     initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
+    gSidebar = initSlideOutSidebar(map)
     gSidebar.setContent(gSidebarHTML);
 
     iss(map);
