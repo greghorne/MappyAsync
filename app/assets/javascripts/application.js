@@ -17,6 +17,7 @@
 //= require leaflet
 //= require Control.Geocoder
 //= require L.Control.Sidebar
+//= require constants
 //= require_tree .
 
 
