@@ -62,4 +62,29 @@ const CONST_MAP_LAYERS = [
         maxZoom: 17
     }
 ];
+
+const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
+                                <h3 style='color: #5e9ca0; text-align: left;'>What does it do?</h2>\
+                                    <p>Given a polygon on the map, calculate demographics within the polygon.</p>\
+                                    <p>Allow for the creation of isochrones (drive-time polygons)</p>\
+                                </br>\
+                                <hr size='3' align='center' color='#5e9ca0'>\
+                                <h3 style='color: #5e9ca0; text-align: center;'>Settings</hr>\
+                                <hr size='3' align='center' color='#5e9ca0'>\
+                                    <center><p>Drive time polygon (minutes):</p></center>\
+                                    <center>\
+                                        <select id='minutes'>\
+                                            <option value='3'>3 minutes</option>\
+                                            <option value='5'>5 minutes</option>\
+                                            <option value='8'>8 minutes</option>\
+                                            <option value='10'>10 minutes</option>\
+                                        </select>\
+                                    </center>\
+                                <hr size='3' align='center' color='#5e9ca0'>\
+                                    <center><p>Drive-time polygon providers:</p></center>\
+                                    <center><label><input type='checkbox' id='bing' checked='true'> Bing Maps API</label></center>\
+                                    <center><label><input type='checkbox' id='targomo' checked='true'> Targomo API</label></center>\
+                                <hr size='3' align='center' color='#5e9ca0'>\
+                                    <center><label><input type='checkbox' id='clickAutoZoom' checked='true'> Auto-zoom on map click</label></center>\
+                                <hr size='3' align='center' color='#5e9ca0'>";
 ////////////////////////////////////////////////////////////
