@@ -66,6 +66,8 @@ const CONST_MAP_LAYERS = [
     }
 ];
 
+const CONST_SLIDEOUT_DELAY_TIME = 500
+
 const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
                                 <h3 style='color: #5e9ca0; text-align: left;'>What does it do?</h2>\
                                     <p>Given a polygon on the map, calculate demographics within the polygon.</p>\
