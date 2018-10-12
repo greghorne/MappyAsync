@@ -138,7 +138,7 @@ function mapGoToLatLng(map, latlng, name) {
         if (!response.valid) {  
             // display x,y out of bounds message
             displayTextControlMsg(map, gTextControlMessage2)
-            setTimeout(function() { map.removeLayer(gMarker); }, 3000)
+            setTimeout(function() { map.removeLayer(gMarker); }, CONST_MESSAGE_INVALID_XY_DISPLAY_TIME)
             return;
         } else {
 
@@ -187,7 +187,7 @@ function mapGoToLatLng(map, latlng, name) {
 ////////////////////////////////////////////////////////////
 function displayTextControlMsg(map, control) {
     map.addControl(control)
-    setTimeout(function() { map.removeControl(control) }, 10000)
+    setTimeout(function() { map.removeControl(control) }, CONST_MESSAGE_DISPLAY_TIME)
 }
 ////////////////////////////////////////////////////////////
 
@@ -234,7 +234,7 @@ function sidebarOpenClose() {
     } else { 
         setTimeout(function () { 
             gSidebar.show(); 
-        }, 500)
+        }, CONST_SLIDEOUT_DELAY_TIME)
     }
 }
 ////////////////////////////////////////////////////////////
