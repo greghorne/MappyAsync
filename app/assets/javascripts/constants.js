@@ -22,6 +22,9 @@ const CONST_MESSAGE_PROVIDER_CHECKBOX         = "At least one drive-time polygon
 const CONST_MESSAGE_INVALID_XY                = "Calculations are limited to within U.S. borders."
 const CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE = "Unable to reverse geocode location."
 
+const CONST_MESSAGE_DISPLAY_TIME              = 10000
+const CONST_MESSAGE_INVALID_XY_DISPLAY_TIME   = 3000
+
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
