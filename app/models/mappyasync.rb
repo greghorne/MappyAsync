@@ -8,33 +8,42 @@ require "pg"
 class DBConnector
 
   def pg_connect
-    host      = ENV['RAILS_HOST']
-    dbname    = ENV['RAILS_DATABASE']
-    port      = ENV['RAILS_PORT']
-    user      = ENV['RAILS_USERNAME']
-    password  = ENV['RAILS_PASSWORD']
 
-    # PGconn.open seems to have quit working with Gem update 
-    conn = PG::Connection.open(
-      :host     => host,
-      :dbname   => dbname,
-      :port     => port,
-      :user     => user,
-      :password => password
-    )
-    return conn
+    begin
+      host      = ENV['RAILS_HOST']
+      dbname    = ENV['RAILS_DATABASE']
+      port      = ENV['RAILS_PORT']
+      user      = ENV['RAILS_USERNAME']
+      password  = ENV['RAILS_PASSWORD']
+
+      # PGconn.open seems to have quit working with Gem update 
+      conn = PG::Connection.open(
+        :host     => host,
+        :dbname   => dbname,
+        :port     => port,
+        :user     => user,
+        :password => password
+      )
+      return conn
+    rescue
+      return false
+    end
 
   end
 end
 
 class Mappyasync
 
+  ########################################
   def initialize(lat, lng)
     @lat = lat
     @lng = lng
   end
+  ########################################
     
-  def check_valid  # see if x,y intersects U.S. States
+  ########################################
+  # check if x,y intersects U.S. States
+  def check_valid  
 
     begin
       db   = DBConnector.new
@@ -50,8 +59,10 @@ class Mappyasync
       return false
 
     rescue
-      return false  # error somewhere
+      return false
     end
 
   end
+  ########################################
+
 end
