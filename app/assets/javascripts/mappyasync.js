@@ -135,10 +135,6 @@ function mapGoToLatLng(map, latlng, name) {
         data: { lat: latlng.lat, lng: latlng.lng }
     }).done(function (response) {
 
-console.log(response.valid)
-// console.log("check_valid_xy:" + isValid)
-
-
         if (!response.valid) {  
             // display x,y out of bounds message
             displayTextControlMsg(map, gTextControlMessage2)
