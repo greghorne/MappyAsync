@@ -7,6 +7,7 @@ require "pg"
 
 class DBConnector
 
+  ########################################
   def pg_connect
 
     begin
@@ -16,7 +17,6 @@ class DBConnector
       user      = ENV['RAILS_USERNAME']
       password  = ENV['RAILS_PASSWORD']
 
-      # PGconn.open seems to have quit working with Gem update 
       conn = PG::Connection.open(
         :host     => host,
         :dbname   => dbname,
@@ -30,6 +30,8 @@ class DBConnector
     end
 
   end
+  ########################################
+
 end
 
 class Mappyasync
@@ -41,6 +43,7 @@ class Mappyasync
   end
   ########################################
     
+
   ########################################
   # check if x,y intersects U.S. States
   def check_valid  
