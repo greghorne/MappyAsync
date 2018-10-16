@@ -19,7 +19,8 @@ html, body { height: 100%; width: 100%; margin: 0px }
   }
 
 // .sidebar-icon { background-image: url(settings-18-26.png); }
-.sidebar-icon { background-image: url(info-26.png); }
+// .sidebar-icon { background-image: url(info-26.png); }   
+.sidebar-icon { background-image: url(settings-18-26.png); }
 .finger-icon { background-image: url(finger-and-thumb-26.png); }
 .hand-icon { background-image: url(whole-hand-26.png); }
 
@@ -77,13 +78,6 @@ html, body { height: 100%; width: 100%; margin: 0px }
     color: #ffffff
 }
 
-// .custom-control-message {
-//     width: 400px;
-//     height: 25px;
-//     z-index:  800;    
-//     font-size: 1.25em !important;
-//     font-family: 'Times New Roman', Times, serif;
-// }
 .leaflet-sidebar .leaflet-control .close {
     background-image: linear-gradient(180deg, #fff, #ddd 40%, #ccc) !important
 }
@@ -100,13 +94,5 @@ html, body { height: 100%; width: 100%; margin: 0px }
     // background-image: linear-gradient(180deg, #fff, #ddd 40%, #ccc);
 	visibility: hidden;
 }
-.message:hover { background-color: #EEE; }
-.message.active { color: rgb(63,81,181); }
-
-.shadowbox {
-    width: 15em;
-    border: 1px solid #333;
-    box-shadow: 8px 8px 5px #444;
-    padding: 8px 12px;
-    background-image: linear-gradient(180deg, #fff, #ddd 40%, #ccc);
-  }
+// .message:hover { background-color: #EEE; }
+// .message.active { color: rgb(63,81,181); }
