@@ -1,9 +1,9 @@
 class MappyAsyncsController < ApplicationController
 
-    def mapclick
-        json = { :msg => "Just a popup"}
-        render json: json
-    end
+    # def mapclick
+    #     json = { :msg => "Just a popup"}
+    #     render json: json
+    # end
 
     # check if given x,y falls within U.S. boundaries
     def check_valid_xy
