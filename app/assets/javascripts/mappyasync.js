@@ -100,9 +100,7 @@ function initGeocoder(map) {
 
     // add map click event
     map.on('click', function(event) {
-        $.ajax({url: "/mapclick", data: { 'lat': event.latlng.lat, 'lng': event.latlng.lng}}).success(function() { 
-            mapGoToLatLng(map, event.latlng, "clicked location") 
-        })
+        mapGoToLatLng(map, event.latlng, "clicked location") 
     });
 }
 ////////////////////////////////////////////////////////////
@@ -137,7 +135,7 @@ function mapGoToLatLng(map, latlng, name) {
 
         if (!response.valid) {  
             // display x,y out of bounds message
-            displayTextMsg($("#message-popup"), CONST_MESSAGE_INVALID_XY)
+            displayTextMsg(map, $("#message-popup"), CONST_MESSAGE_INVALID_XY)
             setTimeout(function() { map.removeLayer(gMarker); }, CONST_MESSAGE_INVALID_XY_DISPLAY_TIME)
             return;
         } else {
@@ -162,7 +160,7 @@ function mapGoToLatLng(map, latlng, name) {
                         gMarker.bindPopup(address).openPopup();
                         addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
                     } else { 
-                        displayTextMsg($("#message-popup"), CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
+                        displayTextMsg(map, $("#message-popup"), CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
                     }
                     if (checkBoxChecked(map)) { calculateDemographics({ lat: response.lat, lng: response.lng}) }
                 })  
@@ -185,10 +183,11 @@ function mapGoToLatLng(map, latlng, name) {
 
 
 ////////////////////////////////////////////////////////////
-function displayTextMsg(element, msg) {
+function displayTextMsg(map, element, msg) {
 
     element[0].innerHTML        = msg
     element[0].style.visibility = 'visible'
+    map.removeLayer(gMarker);
 
     setTimeout(function() { element[0].style.visibility = 'hidden' }, CONST_MESSAGE_DISPLAY_TIME)
 }
@@ -202,7 +201,7 @@ function checkBoxChecked(map) {
     var bTargomo = $('#targomo').is(":checked");
 
     if (!bBing && !bTargomo) {    
-        displayTextMsg($("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
+        displayTextMsg(map, $("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
 
         if (!gSidebar.isVisible()) gSidebar.show()
         return false;
