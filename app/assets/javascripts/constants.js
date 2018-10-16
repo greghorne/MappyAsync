@@ -94,4 +94,3 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                 <hr size='3' align='center' color='#5e9ca0'>";
 ////////////////////////////////////////////////////////////
 
-{/* <center><label><input type='checkbox' id='clickAutoZoom' checked='true' onchange='autoZoomChecked(this.checked);'> Auto-zoom on map click</label></center>\ */}

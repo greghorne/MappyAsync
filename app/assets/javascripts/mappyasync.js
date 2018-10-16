@@ -215,15 +215,11 @@ function checkBoxChecked(map) {
 ////////////////////////////////////////////////////////////
 function calculateDemographics(latlng) {
 
-    var minutes = $('#minutes').val()
-    var bing    = $('#bing').is(":checked");
-    var targomo = $('#targomo').is(":checked");
+    console.log(minutes + " minutes")
+    console.log(bing + " bing")
+    console.log(targomo + " tarmogo")
 
-    // console.log(minutes + " minutes")
-    // console.log(bing + " bing")
-    // console.log(targomo + " tarmogo")
-
-    // console.log("calculate demographics")
+    console.log("calculate demographics.....")
 
 }
 ////////////////////////////////////////////////////////////
@@ -240,24 +236,6 @@ function sidebarOpenClose() {
     }
 }
 ////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////
-// create text control (leaflet map control that just has text in it)
-// function textControl(displayText) {
-
-//     var textCustomControl = L.Control.extend({
-//         options: { position: 'bottomright' },
-//         onAdd: function() {
-//             var container       = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-//             container.innerHTML = "<center>" + displayText + "</center>"
-//             return container;
-//         }
-//     });
-    
-//     return new textCustomControl();
-// }
-// ////////////////////////////////////////////////////////////////
 
 
 ////////////////////// global variables ////////////////////////
@@ -293,29 +271,16 @@ var gbAutoZoom;
 
 
 ////////////////////////////////////////////////////////////
+// handlers for controls on slideout
+
 function minutesOnChange(nValue) {
     gnMinutes = nValue
     console.log("mintes: " + gnMinutes)
 }
 
-// function bingChecked(bChecked) {
-//     gbBing = bChecked;
-//     console.log("bing: " + gbBing)
-// }
+function isChecked(checkboxID, bChecked) {
 
-// function targomoChecked(bChecked) {
-//     gbTargomo = bChecked
-//     console.log("targomo: " + gbTargomo)
-// }
-
-// function autoZoomChecked(bChecked) {
-//     gbAutoZoom = bChecked;
-//     console.log("autozoom: " + gbAutoZoom)
-// }
-
-function isChecked(id, bChecked) {
-
-    switch(id) {
+    switch(checkboxID) {
         case 'bing':
             gbBing = bChecked;
             console.log("bing: " + gbBing)
