@@ -137,7 +137,7 @@ function mapGoToLatLng(map, latlng, name) {
 
         if (!response.valid) {  
             // display x,y out of bounds message
-            displayTextMsg($("#message-invalid-xy"))
+            displayTextMsg($("#message-popup"), CONST_MESSAGE_INVALID_XY)
             setTimeout(function() { map.removeLayer(gMarker); }, CONST_MESSAGE_INVALID_XY_DISPLAY_TIME)
             return;
         } else {
@@ -162,7 +162,7 @@ function mapGoToLatLng(map, latlng, name) {
                         gMarker.bindPopup(address).openPopup();
                         addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
                     } else { 
-                        displayTextMsg($("#message-reverse-geocode"))
+                        displayTextMsg($("#message-popup"), CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
                     }
                     if (checkBoxChecked(map)) { calculateDemographics({ lat: response.lat, lng: response.lng}) }
                 })  
@@ -185,16 +185,12 @@ function mapGoToLatLng(map, latlng, name) {
 
 
 ////////////////////////////////////////////////////////////
-function displayTextMsg(element) {
+function displayTextMsg(element, msg) {
 
-    console.log(element.find('style').find('visibility'))
-    element.find('style').attr('visibility', 'visible')
-    // $this.myElement()
+    element[0].innerHTML        = msg
+    element[0].style.visibility = 'visible'
 
-
-    // element.style.find('display') = 'visible';
-    // map.addControl(control)
-    // setTimeout(function() { $(element).style.display = 'none' }, CONST_MESSAGE_DISPLAY_TIME)
+    setTimeout(function() { element[0].style.visibility = 'hidden' }, CONST_MESSAGE_DISPLAY_TIME)
 }
 ////////////////////////////////////////////////////////////
 
@@ -206,7 +202,7 @@ function checkBoxChecked(map) {
     var bTargomo = $('#targomo').is(":checked");
 
     if (!bBing && !bTargomo) {    
-        displayTextMsg($("#message-provider-checkbox"))
+        displayTextMsg($("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
 
         if (!gSidebar.isVisible()) gSidebar.show()
         return false;

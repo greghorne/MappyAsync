@@ -6,7 +6,7 @@
 
 <style>
 
-.button {
+.message {
 	position: absolute; right: 10px; bottom: 30px;
 	box-shadow: 0 1px 5px rgba(0,0,0,.4);
 	background-color: rgba(255,255,255,1);
@@ -16,8 +16,8 @@
 	padding: 15px 30px; display: inline-block;
 	visibility: hidden;
 }
-.button:hover { background-color: #EEE; }
-.button.active { color: rgb(63,81,181); }
+.message:hover { background-color: #EEE; }
+.message.active { color: rgb(63,81,181); }
 </style>
 
 <div id="map">
@@ -29,9 +29,9 @@
 		<%# <div id="btn-union" onclick="changeMode(&apos;union&apos;)" class="button active">union</div>
 		<div id="btn-intersection" onclick="changeMode(&apos;intersection&apos;)" class="button">intersection</div> %>
 		<%# <div id="btn-average" onclick="changeMode(&apos;average&apos;)" class="button">MappyAsync</div> %>
-		<div id="message-provider-checkbox" class="button">At least one drive-time polygon provider must be selected.<div id="message-provider-checkbox">
-		<div id="message-invalid-xy" class="button">Calculations are limited to within U.S. borders.<div id="message-provider-checkbox">
-		<div id="message-reverse-geocode" class="button">Unable to reverse geocode location.<div id="message-provider-checkbox">
+		<div id="message-popup" class="message">filler message</div>
+		<%# <div id="message-invalid-xy" class="button">Calculations are limited to within U.S. borders.<div id="message-provider-checkbox"> %>
+		<%# <div id="message-reverse-geocode" class="button">Unable to reverse geocode location.<div id="message-provider-checkbox"> %>
 	<%# </div> %>
 </div>
 
