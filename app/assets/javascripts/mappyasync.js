@@ -137,7 +137,7 @@ function mapGoToLatLng(map, latlng, name) {
 
         if (!response.valid) {  
             // display x,y out of bounds message
-            displayTextControlMsg(map, gTextControlMessage2)
+            displayTextMsg($("#message-invalid-xy"))
             setTimeout(function() { map.removeLayer(gMarker); }, CONST_MESSAGE_INVALID_XY_DISPLAY_TIME)
             return;
         } else {
@@ -162,7 +162,7 @@ function mapGoToLatLng(map, latlng, name) {
                         gMarker.bindPopup(address).openPopup();
                         addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
                     } else { 
-                        displayTextControlMsg(map, gTextControlMessage3)
+                        displayTextMsg($("#message-reverse-geocode"))
                     }
                     if (checkBoxChecked(map)) { calculateDemographics({ lat: response.lat, lng: response.lng}) }
                 })  
@@ -185,9 +185,16 @@ function mapGoToLatLng(map, latlng, name) {
 
 
 ////////////////////////////////////////////////////////////
-function displayTextControlMsg(map, control) {
-    map.addControl(control)
-    setTimeout(function() { map.removeControl(control) }, CONST_MESSAGE_DISPLAY_TIME)
+function displayTextMsg(element) {
+
+    console.log(element.find('style').find('visibility'))
+    element.find('style').attr('visibility', 'visible')
+    // $this.myElement()
+
+
+    // element.style.find('display') = 'visible';
+    // map.addControl(control)
+    // setTimeout(function() { $(element).style.display = 'none' }, CONST_MESSAGE_DISPLAY_TIME)
 }
 ////////////////////////////////////////////////////////////
 
@@ -199,7 +206,7 @@ function checkBoxChecked(map) {
     var bTargomo = $('#targomo').is(":checked");
 
     if (!bBing && !bTargomo) {    
-        displayTextControlMsg(map, gTextControlMessage)
+        displayTextMsg($("#message-provider-checkbox"))
 
         if (!gSidebar.isVisible()) gSidebar.show()
         return false;
@@ -242,20 +249,20 @@ function sidebarOpenClose() {
 
 //////////////////////////////////////////////////////////////////////
 // create text control (leaflet map control that just has text in it)
-function textControl(displayText) {
+// function textControl(displayText) {
 
-    var textCustomControl = L.Control.extend({
-        options: { position: 'bottomright' },
-        onAdd: function() {
-            var container       = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
-            container.innerHTML = "<center>" + displayText + "</center>"
-            return container;
-        }
-    });
+//     var textCustomControl = L.Control.extend({
+//         options: { position: 'bottomright' },
+//         onAdd: function() {
+//             var container       = L.DomUtil.create('div', 'highlight-background-message custom-control-message cursor-pointer leaflet-bar', L.DomUtil.get('map'));
+//             container.innerHTML = "<center>" + displayText + "</center>"
+//             return container;
+//         }
+//     });
     
-    return new textCustomControl();
-}
-////////////////////////////////////////////////////////////////
+//     return new textCustomControl();
+// }
+// ////////////////////////////////////////////////////////////////
 
 
 ////////////////////// global variables ////////////////////////
@@ -263,12 +270,12 @@ var gMapLayers   = [];
 var gBaseMaps    = {};
 var gMarker      = L.marker();
 var gSidebar;
-var gSidebarHTML = CONST_SLIDEOUT_HTML
+var gSidebarHTML = CONST_SLIDEOUT_HTML;
 
 // leaflet map controls that contain a text message
-var gTextControlMessage;
-var gTextControlMessage2;
-var gTextControlMessage3;
+// var gTextControlMessage;
+// var gTextControlMessage2;
+// var gTextControlMessage3;
 ////////////////////////////////////////////////////////////////
 
 
@@ -302,9 +309,9 @@ $(document).ready(function() {
 
     /////////////////////////////////
     // initialization of map controls
-    gTextControlMessage   = textControl(CONST_MESSAGE_PROVIDER_CHECKBOX)
-    gTextControlMessage2  = textControl(CONST_MESSAGE_INVALID_XY)
-    gTextControlMessage3  = textControl(CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
+    // gTextControlMessage   = textControl(CONST_MESSAGE_PROVIDER_CHECKBOX)
+    // gTextControlMessage2  = textControl(CONST_MESSAGE_INVALID_XY)
+    // gTextControlMessage3  = textControl(CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
 
     L.control.layers(gBaseMaps).addTo(map)
     L.control.scale({imperial: true, metric: false}).addTo(map)
