@@ -267,10 +267,11 @@ var gMarker      = L.marker();
 var gSidebar;
 var gSidebarHTML = CONST_SLIDEOUT_HTML;
 
-// leaflet map controls that contain a text message
-// var gTextControlMessage;
-// var gTextControlMessage2;
-// var gTextControlMessage3;
+var gnMinutes;
+var gbBing;
+var gbTargomo;
+var gbAutoZoom;
+
 ////////////////////////////////////////////////////////////////
 
 
@@ -288,6 +289,47 @@ var gSidebarHTML = CONST_SLIDEOUT_HTML;
         gBaseMaps[[CONST_MAP_LAYERS[n].name]] = gMapLayers[n];
     }
 })()
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
+function minutesOnChange(nValue) {
+    gnMinutes = nValue
+    console.log("mintes: " + gnMinutes)
+}
+
+// function bingChecked(bChecked) {
+//     gbBing = bChecked;
+//     console.log("bing: " + gbBing)
+// }
+
+// function targomoChecked(bChecked) {
+//     gbTargomo = bChecked
+//     console.log("targomo: " + gbTargomo)
+// }
+
+// function autoZoomChecked(bChecked) {
+//     gbAutoZoom = bChecked;
+//     console.log("autozoom: " + gbAutoZoom)
+// }
+
+function isChecked(id, bChecked) {
+
+    switch(id) {
+        case 'bing':
+            gbBing = bChecked;
+            console.log("bing: " + gbBing)
+            break;
+        case 'targomo':
+            gbTargomo = bChecked;
+            console.log("targomo: " + gbTargomo)
+            break;
+        case 'clickAutoZoom':
+            gbAutoZoom = bChecked;
+            console.log("autozoom: " + gbAutoZoom)
+            break;
+    }
+}
 ////////////////////////////////////////////////////////////
 
 
@@ -319,6 +361,12 @@ $(document).ready(function() {
     gSidebar.setContent(gSidebarHTML);
     /////////////////////////////////
 
+    // initialize values
+    var gnMinutes  = $('#minutes').val()
+    var gbBing     = $('#bing').is(":checked");
+    var gbTargomo  = $('#targomo').is(":checked");
+    var gbAutoZoom = $('#clickAutoZoom').is(":checked");
+ 
     iss(map);
 })
 
