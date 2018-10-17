@@ -19,7 +19,7 @@ const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
 const CONST_MARKER_ISS = new L.Icon({ iconUrl: "/assets/42598-rocket-icon.png", iconsize: [48, 48], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-52] });
 
 const CONST_MESSAGE_PROVIDER_CHECKBOX         = "At least one drive-time polygon provider must be selected."
-const CONST_MESSAGE_INVALID_XY                = "Calculations are limited to within U.S. borders."
+const CONST_MESSAGE_INVALID_XY                = "Calculations are limited to within U.S. boundaries."
 const CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE = "Unable to reverse geocode location."
 
 const CONST_MESSAGE_DISPLAY_TIME              = 10000
@@ -79,10 +79,10 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                     <center><p>Drive time polygon (minutes):</p></center>\
                                     <center>\
                                         <select id=minutes name=minutes onchange='minutesOnChange(this.value);'>\
-                                            <option value='135' selected=selected>1-3-5  minutes</option>\
-                                            <option value='358'>3-5-8  minutes</option>\
-                                            <option value='5810'>5-8-10 minutes</option>\
-                                            <option value='1015'>10-15 minutes</option>\
+                                            <option value='1-3-5' selected=selected>1-3-5  minutes</option>\
+                                            <option value='3-5-8'>3-5-8  minutes</option>\
+                                            <option value='5-8-10'>5-8-10 minutes</option>\
+                                            <option value='10-15'>10-15 minutes</option>\
                                         </select>\
                                     </center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
@@ -93,4 +93,3 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                     <center><label><input type='checkbox' id='clickAutoZoom' checked='true' onchange='isChecked(id, this.checked);'> Auto-zoom on map click</label></center>\
                                 <hr size='3' align='center' color='#5e9ca0'>";
 ////////////////////////////////////////////////////////////
-
