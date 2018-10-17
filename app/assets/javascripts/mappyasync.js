@@ -50,7 +50,7 @@ function iss(map) {
 
 
 ////////////////////////////////////////////////////////////
-function initCustomButton(map, classString, toolTip, fn) {
+function initSidebarButton(map, classString, toolTip, fn) {
     
     var buttonCustomControl = L.Control.extend({
         options: {
@@ -95,12 +95,12 @@ function initGeocoder(map) {
         collapsed:          true,
         position:           'topright'
     }).on('markgeocode', function(e) { 
-        mapGoToLatLng(map, e.geocode.center, e.geocode.name) 
+        processLatLng(map, e.geocode.center, e.geocode.name) 
     }).addTo(map)
 
     // add map click event
     map.on('click', function(event) {
-        mapGoToLatLng(map, event.latlng, "clicked location") 
+        processLatLng(map, event.latlng, "clicked location") 
     });
 }
 ////////////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ function formatAddress(location) {
 
 ////////////////////////////////////////////////////////////
 // handle x,y coordinates from a map click or geocode
-function mapGoToLatLng(map, latlng, name) {
+function processLatLng(map, latlng, name) {
 
     $.ajax({
         url:  "/check_valid_xy.json",
@@ -135,7 +135,7 @@ function mapGoToLatLng(map, latlng, name) {
 
         if (!response.valid) {  
             // display x,y out of bounds message
-            displayTextMsg(map, $("#message-popup"), CONST_MESSAGE_INVALID_XY)
+            displayTextMsg($("#message-popup"), CONST_MESSAGE_INVALID_XY)
             setTimeout(function() { map.removeLayer(gMarker); }, CONST_MESSAGE_INVALID_XY_DISPLAY_TIME)
             return;
         } else {
@@ -160,7 +160,7 @@ function mapGoToLatLng(map, latlng, name) {
                         gMarker.bindPopup(address).openPopup();
                         addLocationToindexedDB(response.display_name, "click location", { lat: response.lat, lng: response.lon });
                     } else { 
-                        displayTextMsg(map, $("#message-popup"), CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
+                        displayTextMsg($("#message-popup"), CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
                     }
                     if (checkBoxChecked(map)) { calculateDemographics({ lat: response.lat, lng: response.lng}) }
                 })  
@@ -171,9 +171,9 @@ function mapGoToLatLng(map, latlng, name) {
                 if (checkBoxChecked(map)) { calculateDemographics(latlng) }
             }
 
-            // CHECK ON THIS!!!  GMH
+            // question gmh
             gMarker.on('dragend', function(event) {
-                mapGoToLatLng(map, event.target._latlng, "clicked location")
+                processLatLng(map, event.target._latlng, "clicked location")
                 if (checkBoxChecked(map)) { calculateDemographics(event.target._latlng); }
             });
         }
@@ -183,11 +183,10 @@ function mapGoToLatLng(map, latlng, name) {
 
 
 ////////////////////////////////////////////////////////////
-function displayTextMsg(map, element, msg) {
+function displayTextMsg(element, msg) {
 
     element[0].innerHTML        = msg
     element[0].style.visibility = 'visible'
-    map.removeLayer(gMarker);
 
     setTimeout(function() { element[0].style.visibility = 'hidden' }, CONST_MESSAGE_DISPLAY_TIME)
 }
@@ -196,12 +195,10 @@ function displayTextMsg(map, element, msg) {
 
 ////////////////////////////////////////////////////////////
 function checkBoxChecked(map) {
-    
-    var bBing    = $('#bing').is(":checked");
-    var bTargomo = $('#targomo').is(":checked");
 
-    if (!bBing && !bTargomo) {    
-        displayTextMsg(map, $("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
+    if (!gbBing && !gbTargomo) {    
+        displayTextMsg($("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
+        map.removeLayer(gMarker)
 
         if (!gSidebar.isVisible()) gSidebar.show()
         return false;
@@ -215,11 +212,13 @@ function checkBoxChecked(map) {
 ////////////////////////////////////////////////////////////
 function calculateDemographics(latlng) {
 
-    console.log(minutes + " minutes")
-    console.log(bing + " bing")
-    console.log(targomo + " tarmogo")
+    console.log("=======================")
+    console.log(gsMinutes + " minutes")
+    console.log(gbBing + " bing")
+    console.log(gbTargomo + " tarmogo")
 
     console.log("calculate demographics.....")
+    console.log("=======================")
 
 }
 ////////////////////////////////////////////////////////////
@@ -245,7 +244,7 @@ var gMarker      = L.marker();
 var gSidebar;
 var gSidebarHTML = CONST_SLIDEOUT_HTML;
 
-var gnMinutes;
+var gsMinutes;
 var gbBing;
 var gbTargomo;
 var gbAutoZoom;
@@ -271,11 +270,10 @@ var gbAutoZoom;
 
 
 ////////////////////////////////////////////////////////////
-// handlers for controls on slideout
-
-function minutesOnChange(nValue) {
-    gnMinutes = nValue
-    console.log("mintes: " + gnMinutes)
+// handlers for controls on slideout panel
+function minutesOnChange(sValue) {
+    gsMinutes = sValue
+    console.log("mintes: " + gsMinutes)
 }
 
 function isChecked(checkboxID, bChecked) {
@@ -294,6 +292,10 @@ function isChecked(checkboxID, bChecked) {
             console.log("autozoom: " + gbAutoZoom)
             break;
     }
+
+    if (!gbBing && !gbTargomo) {
+        displayTextMsg($("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
+    }
 }
 ////////////////////////////////////////////////////////////
 
@@ -302,48 +304,35 @@ function isChecked(checkboxID, bChecked) {
 // here we go...
 $(document).ready(function() {
 
+    /////////////////////////////////
     // initialize map
     var map = L.map('map', {
         center: [ CONST_MAP_DEFAULT_LATITUDEY, CONST_MAP_DEFAULT_LONGITUDEX ],
         zoom:     CONST_MAP_DEFAULT_ZOOM,
         layers: [ gMapLayers[0] ]
     });
+    /////////////////////////////////
 
     /////////////////////////////////
     // initialization of map controls
-    // gTextControlMessage   = textControl(CONST_MESSAGE_PROVIDER_CHECKBOX)
-    // gTextControlMessage2  = textControl(CONST_MESSAGE_INVALID_XY)
-    // gTextControlMessage3  = textControl(CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
-
     L.control.layers(gBaseMaps).addTo(map)
     L.control.scale({imperial: true, metric: false}).addTo(map)
 
     initGeocoder(map)
-
-    initCustomButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
+    initSidebarButton(map, "sidebar-icon", "Open/Close Sidebar", sidebarOpenClose);
 
     gSidebar = initSlideOutSidebar(map)
     gSidebar.setContent(gSidebarHTML);
     /////////////////////////////////
 
+    /////////////////////////////////
     // initialize values
-    var gnMinutes  = $('#minutes').val()
-    var gbBing     = $('#bing').is(":checked");
-    var gbTargomo  = $('#targomo').is(":checked");
-    var gbAutoZoom = $('#clickAutoZoom').is(":checked");
+    gsMinutes  = $('#minutes').val()
+    gbBing     = $('#bing').is(":checked");
+    gbTargomo  = $('#targomo').is(":checked");
+    gbAutoZoom = $('#clickAutoZoom').is(":checked");
+    /////////////////////////////////
  
     iss(map);
 })
 
-
-
-// create or replace function z_tl_2016_us_state(IN double precision, IN double precision) 
-// returns table(gid integer) as $$
-// BEGIN
-// SELECT gid from tl_2016_us_state
-// WHERE ST_Intersects( tl_2016_us_state.geom, ST_GeomFromText('POINT(' || $1 || ' ' || $2 || ')', 4269));
-// END;
-// $$
-// LANGUAGE plpgsql STABLE NOT LEAKPROOF
-// COST 100
-// ROWS 1;
