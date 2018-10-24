@@ -25,6 +25,8 @@ const CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE = "Unable to reverse geocode locat
 const CONST_MESSAGE_DISPLAY_TIME              = 10000
 const CONST_MESSAGE_INVALID_XY_DISPLAY_TIME   = 3000
 
+const CONST_INTERSECTS_USA_URL                = "http://zotac1.ddns.net:8000/v1/intersects-usa/"
+
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
     {
