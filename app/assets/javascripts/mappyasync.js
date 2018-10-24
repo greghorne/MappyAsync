@@ -128,12 +128,13 @@ function formatAddress(location) {
 function processLatLng(map, latlng, name) {
 
     $.ajax({
-        url:  "/check_valid_xy.json",
-        type: "GET",
-        data: { lat: latlng.lat, lng: latlng.lng }
+        url:  CONST_INTERSECTS_USA_URL + latlng.lng + "/" + latlng.lat,
+        type: "GET"
     }).done(function (response) {
 
-        if (!response.valid) {  
+        var bIntersects = JSON.parse(response).intersects
+
+        if (!bIntersects) {  
             // display x,y out of bounds message
             displayTextMsg($("#message-popup"), CONST_MESSAGE_INVALID_XY)
             setTimeout(function() { map.removeLayer(gMarker); }, CONST_MESSAGE_INVALID_XY_DISPLAY_TIME)
