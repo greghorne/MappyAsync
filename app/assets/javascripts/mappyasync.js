@@ -165,19 +165,19 @@ function processLatLng(map, latlng, name) {
                     }
                     console.log("response =====")
                     console.log(response)
-                    if (checkBoxChecked(map)) { calculateDemographics(response.lon, response.lat) }
+                    if (checkBoxChecked(map)) { calculateDemographics(response.lon, response.lat, map) }
                 })  
                 
             } else {
                 gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
                 addLocationToindexedDB(name, "geocoded location", latlng)
-                if (checkBoxChecked(map)) { calculateDemographics(latlng.lng, latlng.lat) }
+                if (checkBoxChecked(map)) { calculateDemographics(latlng.lng, latlng.lat, map) }
             }
 
             // question gmh
             gMarker.on('dragend', function(event) {
                 processLatLng(map, event.target._latlng, "clicked location")
-                if (checkBoxChecked(map)) { calculateDemographics(event.target._latlng.lng, event.target._latlng.lat); }
+                if (checkBoxChecked(map)) { calculateDemographics(event.target._latlng.lng, event.target._latlng.lat, map); }
             });
         }
     });
@@ -213,7 +213,7 @@ function checkBoxChecked(map) {
 
 
 ////////////////////////////////////////////////////////////
-function calculateDemographics(lng, lat) {
+function calculateDemographics(lng, lat, map) {
 
     console.log("=======================")
     console.log(gsMinutes + " minutes")
@@ -221,15 +221,30 @@ function calculateDemographics(lng, lat) {
     console.log(gbTargomo + " tarmogo")
 
     console.log("calculate demographics.....")
+    console.log(lng + "," + lat)
     console.log("=======================")
-console.log(lng + "," + lat)
+
 
     $.ajax({
         url:  "/process_xy.json",
         type: "GET",
         data: { lng: lng, lat: lat, minutes: gsMinutes, bing: gbBing, targomo: gbTargomo }
     }).done(function (result) {
+        console.log("result =====")
 
+        latlngs = [
+            [ // first polygon
+              [[37, -109.05],[41, -109.03],[41, -102.05],[37, -102.04]], // outer ring
+              [[37.29, -108.58],[40.71, -108.58],[40.71, -102.50],[37.29, -102.50]] // hole
+            ]
+        ]
+        console.log(latlngs)
+        data = []
+        data.push([result['coordinates'][0][0]])
+        console.log(data)
+
+        var polygon1 = L.polygon(data, {color: "red"}).addTo(map)
+        map.fitBounds(polygon1.getBounds());
     })
 
 }
