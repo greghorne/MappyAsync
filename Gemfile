@@ -40,6 +40,7 @@ gem 'json'
 # gem 'leaflet-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
+gem 'rest-client'
 
 # gem 'jquery-rails'
 # gem 'jquery-ui-rails'
