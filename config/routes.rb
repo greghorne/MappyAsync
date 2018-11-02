@@ -4,5 +4,6 @@ Rails.application.routes.draw do
   get "/"               => "mappy_asyncs#mappyasync"
   get "/mapclick"       => "mappy_asyncs#mapclick"
   get "/check_valid_xy" => "mappy_asyncs#check_valid_xy"
+  get "/process_xy"     => "mappy_asyncs#process_xy"
 
 end
