@@ -163,19 +163,21 @@ function processLatLng(map, latlng, name) {
                     } else { 
                         displayTextMsg($("#message-popup"), CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
                     }
-                    if (checkBoxChecked(map)) { calculateDemographics({ lat: response.lat, lng: response.lng}) }
+                    console.log("response =====")
+                    console.log(response)
+                    if (checkBoxChecked(map)) { calculateDemographics(response.lon, response.lat) }
                 })  
                 
             } else {
                 gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
                 addLocationToindexedDB(name, "geocoded location", latlng)
-                if (checkBoxChecked(map)) { calculateDemographics(latlng) }
+                if (checkBoxChecked(map)) { calculateDemographics(latlng.lng, latlng.lat) }
             }
 
             // question gmh
             gMarker.on('dragend', function(event) {
                 processLatLng(map, event.target._latlng, "clicked location")
-                if (checkBoxChecked(map)) { calculateDemographics(event.target._latlng); }
+                if (checkBoxChecked(map)) { calculateDemographics(event.target._latlng.lng, event.target._latlng.lat); }
             });
         }
     });
@@ -211,7 +213,7 @@ function checkBoxChecked(map) {
 
 
 ////////////////////////////////////////////////////////////
-function calculateDemographics(latlng) {
+function calculateDemographics(lng, lat) {
 
     console.log("=======================")
     console.log(gsMinutes + " minutes")
@@ -220,6 +222,15 @@ function calculateDemographics(latlng) {
 
     console.log("calculate demographics.....")
     console.log("=======================")
+console.log(lng + "," + lat)
+
+    $.ajax({
+        url:  "/process_xy.json",
+        type: "GET",
+        data: { lng: lng, lat: lat, minutes: gsMinutes, bing: gbBing, targomo: gbTargomo }
+    }).done(function (result) {
+
+    })
 
 }
 ////////////////////////////////////////////////////////////
