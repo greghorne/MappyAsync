@@ -238,12 +238,23 @@ function calculateDemographics(lng, lat, map) {
               [[37.29, -108.58],[40.71, -108.58],[40.71, -102.50],[37.29, -102.50]] // hole
             ]
         ]
-        console.log(latlngs)
-        data = []
-        data.push([result['coordinates'][0][0]])
-        console.log(data)
+        // console.log(latlngs)
+        // data1 = []
+        // data1.push([result['coordinates'][0][0]])
+        // console.log(data1)
 
-        var polygon1 = L.polygon(data, {color: "red"}).addTo(map)
+        // targomo returns - longitude, latitude
+        // leaflet wants   - latitude, longitude
+        var numberIndicies = result.coordinates[0][0].length
+        var coords = []
+
+        for (n = 0; n < numberIndicies; n++) {
+            lat = result.coordinates[0][0][n][1]
+            lng = result.coordinates[0][0][n][0]
+            coords.push({lat: lat, lng: lng})
+        }
+
+        var polygon1 = L.polygon(coords, {color: "red"}).addTo(map)
         map.fitBounds(polygon1.getBounds());
     })
 
