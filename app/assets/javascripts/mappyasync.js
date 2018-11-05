@@ -169,12 +169,11 @@ function processLatLng(map, latlng, name) {
                 })  
                 
             } else {
-                map.on("zoomend", function() {
-                    console.log("ZOOMEND...")
-                    gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
-                    addLocationToindexedDB(name, "geocoded location", latlng)
-                })
-                if (checkBoxChecked(map)) { calculateDemographics(latlng.lng, latlng.lat, map) }
+                gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
+                addLocationToindexedDB(name, "geocoded location", latlng)
+                setTimeout(function() {
+                    if (checkBoxChecked(map)) { calculateDemographics(latlng.lng, latlng.lat, map) }
+                }, 3500)
                 
             }
 
