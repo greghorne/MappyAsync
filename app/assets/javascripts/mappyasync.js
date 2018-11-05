@@ -169,9 +169,13 @@ function processLatLng(map, latlng, name) {
                 })  
                 
             } else {
-                gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
-                addLocationToindexedDB(name, "geocoded location", latlng)
+                map.on("zoomend", function() {
+                    console.log("ZOOMEND...")
+                    gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
+                    addLocationToindexedDB(name, "geocoded location", latlng)
+                })
                 if (checkBoxChecked(map)) { calculateDemographics(latlng.lng, latlng.lat, map) }
+                
             }
 
             // question gmh
@@ -220,34 +224,55 @@ function calculateDemographics(lng, lat, map) {
     console.log(gbBing + " bing")
     console.log(gbTargomo + " tarmogo")
     console.log("=======================")
-    var seconds = parseInt(gsMinutes.split("-")[1]) * 60
-    console.log(seconds)
-    console.log("=======================")
     console.log("")
 
+    // remove any existing isochrones
+    gIsochrones.map(function(isochrone) {
+        map.removeLayer(isochrone)
+    })
+    gIsochrones = []
 
-
-    $.ajax({
-        url:  "/process_xy.json",
-        type: "GET",
-        data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo }
-    }).done(function (result) {
-
-        console.log(result)
-        
-        var numberIndicies = result.coordinates[0][0].length
-        var coords = []
-
-        for (n = 0; n < numberIndicies; n++) {
-            lat = result.coordinates[0][0][n][1]
-            lng = result.coordinates[0][0][n][0]
-            coords.push({lat: lat, lng: lng})
-        }
-
-        var polygon1 = L.polygon(coords, {color: "blue"}).addTo(map)
-        map.fitBounds(polygon1.getBounds());
+    // convert minutes into seconds
+    var time = []
+    var minutes = gsMinutes.split("-").map(function(str) {
+        time.push(parseInt(str) * 60)
     })
 
+    var counter = 1
+    time.reverse().map(function(seconds) {
+        $.ajax({
+            url:  "/process_xy.json",
+            type: "GET",
+            data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo }
+        }).done(function (result) {
+
+            var numberIndicies = result.coordinates[0][0].length
+            var coords = []
+
+            for (var n = 0; n < numberIndicies; n++) {
+                lat = result.coordinates[0][0][n][1]
+                lng = result.coordinates[0][0][n][0]
+                coords.push({lat: lat, lng: lng})
+            }
+
+            switch (counter) {
+                case 1:
+                    isoColor = CONST_ISO_COLOR_1;
+                    break;
+                case 2:
+                    isoColor = CONST_ISO_COLOR_2;
+                    break;
+                case 3:
+                    isoColor = CONST_ISO_COLOR_3;
+                    break;
+            }
+            counter +=1
+
+            gIsochrones.push(L.polygon(coords, {color: isoColor}))
+            gIsochrones[gIsochrones.length - 1].addTo(map)
+            if (counter == 3) map.fitBounds(gIsochrones[0].getBounds());
+        })
+    })
 }
 ////////////////////////////////////////////////////////////
 
@@ -276,6 +301,8 @@ var gsMinutes;
 var gbBing;
 var gbTargomo;
 var gbAutoZoom;
+
+var gIsochrones = [];
 
 ////////////////////////////////////////////////////////////////
 
@@ -341,6 +368,7 @@ $(document).ready(function() {
     });
     /////////////////////////////////
 
+   
     /////////////////////////////////
     // initialization of map controls
     L.control.layers(gBaseMaps).addTo(map)

@@ -18,14 +18,18 @@ const CONST_OSM_ADDR_DETAILS    =  1;
 const CONST_PIN_ANCHOR = new L.Point(48/2, 48);
 const CONST_MARKER_ISS = new L.Icon({ iconUrl: "/assets/42598-rocket-icon.png", iconsize: [48, 48], iconAnchor: CONST_PIN_ANCHOR, popupAnchor: [0,-52] });
 
-const CONST_MESSAGE_PROVIDER_CHECKBOX         = "At least one drive-time polygon provider must be selected."
-const CONST_MESSAGE_INVALID_XY                = "Calculations are limited to within U.S. boundaries."
-const CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE = "Unable to reverse geocode location."
+const CONST_MESSAGE_PROVIDER_CHECKBOX         = "At least one drive-time polygon provider must be selected.";
+const CONST_MESSAGE_INVALID_XY                = "Calculations are limited to within U.S. boundaries.";
+const CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE = "Unable to reverse geocode location.";
 
-const CONST_MESSAGE_DISPLAY_TIME              = 10000
-const CONST_MESSAGE_INVALID_XY_DISPLAY_TIME   = 3000
+const CONST_MESSAGE_DISPLAY_TIME              = 10000;
+const CONST_MESSAGE_INVALID_XY_DISPLAY_TIME   = 3000;
 
-const CONST_INTERSECTS_USA_URL                = "http://zotac1.ddns.net:8000/v1/intersects-usa/"
+const CONST_INTERSECTS_USA_URL                = "http://zotac1.ddns.net:8000/v1/intersects-usa/";
+
+const CONST_ISO_COLOR_1 = "blue";
+const CONST_ISO_COLOR_2 = "yellow";
+const CONST_ISO_COLOR_3 = "red";
 
 // definition of map layers; first layer is the default layer displayed
 const CONST_MAP_LAYERS = [
