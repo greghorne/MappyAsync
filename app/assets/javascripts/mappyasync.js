@@ -219,32 +219,22 @@ function calculateDemographics(lng, lat, map) {
     console.log(gsMinutes + " minutes")
     console.log(gbBing + " bing")
     console.log(gbTargomo + " tarmogo")
-
-    console.log("calculate demographics.....")
-    console.log(lng + "," + lat)
     console.log("=======================")
+    var seconds = parseInt(gsMinutes.split("-")[1]) * 60
+    console.log(seconds)
+    console.log("=======================")
+    console.log("")
+
 
 
     $.ajax({
         url:  "/process_xy.json",
         type: "GET",
-        data: { lng: lng, lat: lat, minutes: gsMinutes, bing: gbBing, targomo: gbTargomo }
+        data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo }
     }).done(function (result) {
-        console.log("result =====")
 
-        latlngs = [
-            [ // first polygon
-              [[37, -109.05],[41, -109.03],[41, -102.05],[37, -102.04]], // outer ring
-              [[37.29, -108.58],[40.71, -108.58],[40.71, -102.50],[37.29, -102.50]] // hole
-            ]
-        ]
-        // console.log(latlngs)
-        // data1 = []
-        // data1.push([result['coordinates'][0][0]])
-        // console.log(data1)
-
-        // targomo returns - longitude, latitude
-        // leaflet wants   - latitude, longitude
+        console.log(result)
+        
         var numberIndicies = result.coordinates[0][0].length
         var coords = []
 
@@ -254,7 +244,7 @@ function calculateDemographics(lng, lat, map) {
             coords.push({lat: lat, lng: lng})
         }
 
-        var polygon1 = L.polygon(coords, {color: "red"}).addTo(map)
+        var polygon1 = L.polygon(coords, {color: "blue"}).addTo(map)
         map.fitBounds(polygon1.getBounds());
     })
 

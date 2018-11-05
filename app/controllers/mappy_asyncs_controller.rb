@@ -17,17 +17,12 @@ class MappyAsyncsController < ApplicationController
     def process_xy
 
         targomo_key = ENV['RAILS_TARGOMO']
-        minutes     = params[:minutes].split("-")
 
-        n   = 0
-        max = minutes.length()
+        url = "http://zotac1.ddns.net:8001/v1/targomo-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + targomo_key
+        puts url
+        response_intersects = RestClient.get url
+        render :json => JSON.parse(response_intersects)['targomo']
 
-        while n < 1 do
-            url = "http://zotac1.ddns.net:8001/v1/targomo-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + (minutes[n].to_i * 60).to_s + "/" + targomo_key
-            response_intersects = RestClient.get url
-            render :json => JSON.parse(response_intersects)['targomo']
-            n +=1
-        end 
       
     end
 
