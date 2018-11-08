@@ -248,7 +248,7 @@ function calculateDemographics(lng, lat, map) {
         //
 
         $.ajax({
-            url:  "/process_xy.json",
+            url:  "/process_targomo.json",
             type: "GET",
             data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
