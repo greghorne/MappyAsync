@@ -239,10 +239,18 @@ function calculateDemographics(lng, lat, map) {
 
     var counter = 1
     time.reverse().map(function(seconds) {
+        
+        //
+        // 'index' (integer value) is passed to the ajax call and the same value is returned
+        // this is to keep track of what color the polygon should have
+        // due to the asynchronous nature of the call, multiple ajax calls may not return in 
+        // the order they were called
+        //
+
         $.ajax({
             url:  "/process_xy.json",
             type: "GET",
-            data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo }
+            data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
 
             var numberIndicies = result.coordinates[0][0].length
@@ -254,7 +262,7 @@ function calculateDemographics(lng, lat, map) {
                 coords.push({lat: lat, lng: lng})
             }
 
-            switch (counter) {
+            switch (parseInt(result['index'])) {
                 case 1:
                     isoColor = CONST_ISO_COLOR_1;
                     break;
@@ -264,13 +272,16 @@ function calculateDemographics(lng, lat, map) {
                 case 3:
                     isoColor = CONST_ISO_COLOR_3;
                     break;
+                default:
+                    console.log("not found")
             }
-            counter +=1
 
             gIsochrones.push(L.polygon(coords, {color: isoColor}))
             gIsochrones[gIsochrones.length - 1].addTo(map)
-            if (counter == 3) map.fitBounds(gIsochrones[0].getBounds());
+            if (counter >=3 || counter <=4) map.fitBounds(gIsochrones[0].getBounds());
+
         })
+        counter +=1
     })
 }
 ////////////////////////////////////////////////////////////
