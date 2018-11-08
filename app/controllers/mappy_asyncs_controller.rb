@@ -16,11 +16,10 @@ class MappyAsyncsController < ApplicationController
     #     render :json => { valid: valid_xy } 
     # end
 
-    def process_xy
+    def process_targomo
 
-        url = "http://zotac1.ddns.net:8001/v1/targomo-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.targomo_key
-        response_intersects = RestClient.get url
-        render :json => JSON.parse(response_intersects)['targomo'].chop() + ",\"index\": " + params['index'] + "}"
+        response = RestClient.get "http://zotac1.ddns.net:8001/v1/targomo-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.targomo_key
+        render :json => JSON.parse(response)['targomo'].chop() + ",\"index\": " + params['index'] + "}"
       
     end
 
