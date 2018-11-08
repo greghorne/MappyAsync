@@ -88,7 +88,7 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                             <option value='1-3-5' selected=selected>1-3-5  minutes</option>\
                                             <option value='3-5-8'>3-5-8  minutes</option>\
                                             <option value='5-8-10'>5-8-10 minutes</option>\
-                                            <option value='10-15'>10-15 minutes</option>\
+                                            <option value='10-15-20'>10-15-20 minutes</option>\
                                         </select>\
                                     </center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
