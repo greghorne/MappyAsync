@@ -18,15 +18,9 @@ class MappyAsyncsController < ApplicationController
 
     def process_xy
 
-        targomo_key = ENV['RAILS_TARGOMO']
-
-        puts targomo_key
-
-        url = "http://zotac1.ddns.net:8001/v1/targomo-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + targomo_key
-        puts url
+        url = "http://zotac1.ddns.net:8001/v1/targomo-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.targomo_key
         response_intersects = RestClient.get url
-        render :json => JSON.parse(response_intersects)['targomo']
-
+        render :json => JSON.parse(response_intersects)['targomo'].chop() + ",\"index\": " + params['index'] + "}"
       
     end
 
