@@ -220,10 +220,87 @@ function calculateDemographics(lng, lat, map) {
 
     console.log("=======================")
     console.log(gsMinutes + " minutes")
-    console.log(gbBing + " bing")
+    console.log(gbBing    + " bing")
     console.log(gbTargomo + " tarmogo")
     console.log("=======================")
     console.log("")
+
+    if (bing)    process_bing(lng, lat, map);
+    // if (targomo) process_targomo(lng, lat, map);
+
+
+}
+////////////////////////////////////////////////////////////
+
+function process_bing(lng, lat, map) {
+    // remove any existing isochrones
+    gIsochrones.map(function(isochrone) {
+        map.removeLayer(isochrone)
+    })
+    gIsochrones = []
+
+    // convert minutes into seconds
+    var time = []
+    var minutes = gsMinutes.split("-").map(function(str) {
+        time.push(parseInt(str) * 60)
+    })
+
+    var counter = 1
+    time.reverse().map(function(seconds) {
+        
+        //
+        // 'index' (integer value) is passed to the ajax call and the same value is returned
+        // this is to keep track of what color the polygon should have
+        // due to the asynchronous nature of the call, multiple ajax calls may not return in 
+        // the order they were called
+        //
+
+        $.ajax({ 
+            url:  "process_bing.json",
+            type: "GET",
+            data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
+        }).done(function (result) {
+
+            console.log("trace=====")
+            console.log(result)
+            console.log("------------")
+            console.log(JSON.parse(result.coordinates))
+            console.log("===========")
+            
+            var coords = []
+            // var numberIndicies = result.coordinates[0][0].length
+
+            // for (var n = 0; n < numberIndicies; n++) {
+            //     lat = result.coordinates[0][0][n][1]
+            //     lng = result.coordinates[0][0][n][0]
+            //     coords.push({lat: lat, lng: lng})
+            // }
+
+            switch (parseInt(result['index'])) {
+                case 1:
+                    isoColor = CONST_ISO_COLOR_1;
+                    break;
+                case 2:
+                    isoColor = CONST_ISO_COLOR_2;
+                    break;
+                case 3:
+                    isoColor = CONST_ISO_COLOR_3;
+                    break;
+                default:
+                    console.log("not found")
+            }
+
+            gIsochrones.push(L.polygon(result.coordinates[0], {color: isoColor}))
+            gIsochrones[gIsochrones.length - 1].addTo(map)
+            if (counter >=3 || counter <=4) map.fitBounds(gIsochrones[0].getBounds());
+
+        })
+        counter +=1
+    })
+}
+
+
+function process_targomo(lng, lat, map) {
 
     // remove any existing isochrones
     gIsochrones.map(function(isochrone) {
@@ -247,14 +324,16 @@ function calculateDemographics(lng, lat, map) {
         // the order they were called
         //
 
-        $.ajax({
-            url:  "/process_targomo.json",
+        $.ajax({ 
+            url:  "process_targomo.json",
             type: "GET",
             data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
 
-            var numberIndicies = result.coordinates[0][0].length
+            console.log(result)
+            
             var coords = []
+               var numberIndicies = result.coordinates[0][0].length
 
             for (var n = 0; n < numberIndicies; n++) {
                 lat = result.coordinates[0][0][n][1]
@@ -284,7 +363,6 @@ function calculateDemographics(lng, lat, map) {
         counter +=1
     })
 }
-////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////////

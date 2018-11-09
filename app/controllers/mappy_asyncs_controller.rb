@@ -17,9 +17,18 @@ class MappyAsyncsController < ApplicationController
     # end
 
     def process_targomo
-
+puts "process_targomo"
         response = RestClient.get "http://zotac1.ddns.net:8001/v1/targomo-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.targomo_key
+        puts response
         render :json => JSON.parse(response)['targomo'].chop() + ",\"index\": " + params['index'] + "}"
+      
+    end
+
+    def process_bing
+puts "process_bing ===================="
+        response = RestClient.get "192.168.1.240:8002/v1/bing-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.bing_key
+        puts JSON.parse(response)['bing'].chop() + ",\"index\": " + params['index'] + "}"
+        render :json => JSON.parse(response)['bing'].chop() + ",\"index\": " + params['index'] + "}"
       
     end
 
