@@ -85,7 +85,8 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                     <center><p>Drive time polygon (minutes):</p></center>\
                                     <center>\
                                         <select id=minutes name=minutes onchange='minutesOnChange(this.value);'>\
-                                            <option value='1-3-5' selected=selected>1-3-5  minutes</option>\
+                                            <option value='1-2-3' selected=selected>1-2-3  minutes</option>\
+                                            <option value='1-3-5'>1-3-5  minutes</option>\
                                             <option value='3-5-8'>3-5-8  minutes</option>\
                                             <option value='5-8-10'>5-8-10 minutes</option>\
                                             <option value='10-15-20'>10-15-20 minutes</option>\
@@ -93,9 +94,9 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                     </center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                     <center><p>Drive-time polygon providers:</p></center>\
-                                    <center><label><input type='checkbox' id='bing' checked='true' onchange='isChecked(id, this.checked);'> Bing Maps API</label></center>\
-                                    <center><label><input type='checkbox' id='here' checked='true' onchange='isChecked(id, this.checked);'> HERE API</label></center>\
-                                    <center><label><input type='checkbox' id='targomo' checked='true' onchange='isChecked(id, this.checked);'> Targomo API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='bing' checked> Bing Maps API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='here'> HERE API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='targomo'> Targomo API</label></center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                     <center><label><input type='checkbox' id='clickAutoZoom' checked='true' onchange='isChecked(id, this.checked);'> Auto-zoom on map click</label></center>\
                                 <hr size='3' align='center' color='#5e9ca0'>";
