@@ -16,14 +16,19 @@ class MappyAsyncsController < ApplicationController
     #     render :json => { valid: valid_xy } 
     # end
 
+    def process_bing
+puts ("process_bing =========")
+        response = RestClient.get "http://zotac1.ddns.net:8002/v1/bing-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.bing_key
+        render :json => JSON.parse(response)['bing'].chop() + ",\"index\": " + params['index'] + "}"
+    end
+
+    def process_here
+        return
+    end
+
     def process_targomo
         response = RestClient.get "http://zotac1.ddns.net:8001/v1/targomo-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.targomo_key
         render :json => JSON.parse(response)['targomo'].chop() + ",\"index\": " + params['index'] + "}"
-    end
-
-    def process_bing
-        response = RestClient.get "192.168.1.240:8002/v1/bing-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.bing_key
-        render :json => JSON.parse(response)['bing'].chop() + ",\"index\": " + params['index'] + "}"
     end
 
 end

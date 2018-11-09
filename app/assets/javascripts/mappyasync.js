@@ -219,7 +219,7 @@ function displayTextMsg(element, msg) {
 function calculateDemographics(lng, lat, map) {
 
     var strIsochroneType = document.querySelector('input[name=iso]:checked').value
-    alert(strIsochroneType)
+    console.log(strIsochroneType)
 
     switch(strIsochroneType) {
         case 'bing':
