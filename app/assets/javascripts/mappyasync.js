@@ -225,8 +225,8 @@ function calculateDemographics(lng, lat, map) {
     console.log("=======================")
     console.log("")
 
-    if (bing)    process_bing(lng, lat, map);
-    // if (targomo) process_targomo(lng, lat, map);
+    // if (bing)    process_bing(lng, lat, map);
+    if (targomo) process_targomo(lng, lat, map);
 
 
 }
@@ -264,7 +264,7 @@ function process_bing(lng, lat, map) {
             console.log("trace=====")
             console.log(result)
             console.log("------------")
-            console.log(JSON.parse(result.coordinates))
+            console.log(result.coordinates)
             console.log("===========")
             
             var coords = []
