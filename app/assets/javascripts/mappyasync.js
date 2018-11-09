@@ -165,14 +165,14 @@ function processLatLng(map, latlng, name) {
                     }
                     console.log("response =====")
                     console.log(response)
-                    if (checkBoxChecked(map)) { calculateDemographics(response.lon, response.lat, map) }
+                    calculateDemographics(response.lon, response.lat, map)
                 })  
                 
             } else {
                 gMarker.bindPopup(strAddress = "<center>" + name.replace(", United States of America", "") + "</center>").openPopup();
                 addLocationToindexedDB(name, "geocoded location", latlng)
                 setTimeout(function() {
-                    if (checkBoxChecked(map)) { calculateDemographics(latlng.lng, latlng.lat, map) }
+                    calculateDemographics(latlng.lng, latlng.lat, map)
                 }, 3500)
                 
             }
@@ -180,7 +180,7 @@ function processLatLng(map, latlng, name) {
             // question gmh
             gMarker.on('dragend', function(event) {
                 processLatLng(map, event.target._latlng, "clicked location")
-                if (checkBoxChecked(map)) { calculateDemographics(event.target._latlng.lng, event.target._latlng.lat, map); }
+                calculateDemographics(event.target._latlng.lng, event.target._latlng.lat, map);
             });
         }
     });
@@ -200,34 +200,38 @@ function displayTextMsg(element, msg) {
 
 
 ////////////////////////////////////////////////////////////
-function checkBoxChecked(map) {
+// function checkBoxChecked(map) {
 
-    if (!gbBing && !gbTargomo) {    
-        displayTextMsg($("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
-        map.removeLayer(gMarker)
+//     if (!gbBing && !gbTargomo) {    
+//         displayTextMsg($("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
+//         map.removeLayer(gMarker)
 
-        if (!gSidebar.isVisible()) gSidebar.show()
-        return false;
-    }
+//         if (!gSidebar.isVisible()) gSidebar.show()
+//         return false;
+//     }
 
-    return true;
-}
+//     return true;
+// }
 ////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////////
 function calculateDemographics(lng, lat, map) {
 
-    console.log("=======================")
-    console.log(gsMinutes + " minutes")
-    console.log(gbBing    + " bing")
-    console.log(gbTargomo + " tarmogo")
-    console.log("=======================")
-    console.log("")
+    var strIsochroneType = document.querySelector('input[name=iso]:checked').value
+    alert(strIsochroneType)
 
-    // if (bing)    process_bing(lng, lat, map);
-    if (targomo) process_targomo(lng, lat, map);
-
+    switch(strIsochroneType) {
+        case 'bing':
+            process_bing(lng, lat, map);
+            break;
+        case 'targomo':
+            process_targomo(lng, lat, map);
+            break;                 
+        case 'here':
+            console.log("process here ===========")
+            break;
+    }
 
 }
 ////////////////////////////////////////////////////////////
@@ -268,13 +272,6 @@ function process_bing(lng, lat, map) {
             console.log("===========")
             
             var coords = []
-            // var numberIndicies = result.coordinates[0][0].length
-
-            // for (var n = 0; n < numberIndicies; n++) {
-            //     lat = result.coordinates[0][0][n][1]
-            //     lng = result.coordinates[0][0][n][0]
-            //     coords.push({lat: lat, lng: lng})
-            // }
 
             switch (parseInt(result['index'])) {
                 case 1:
@@ -330,10 +327,8 @@ function process_targomo(lng, lat, map) {
             data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
 
-            console.log(result)
-            
             var coords = []
-               var numberIndicies = result.coordinates[0][0].length
+            var numberIndicies = result.coordinates[0][0].length
 
             for (var n = 0; n < numberIndicies; n++) {
                 lat = result.coordinates[0][0][n][1]
@@ -419,27 +414,27 @@ function minutesOnChange(sValue) {
     console.log("mintes: " + gsMinutes)
 }
 
-function isChecked(checkboxID, bChecked) {
+// function isChecked(checkboxID, bChecked) {
 
-    switch(checkboxID) {
-        case 'bing':
-            gbBing = bChecked;
-            console.log("bing: " + gbBing)
-            break;
-        case 'targomo':
-            gbTargomo = bChecked;
-            console.log("targomo: " + gbTargomo)
-            break;
-        case 'clickAutoZoom':
-            gbAutoZoom = bChecked;
-            console.log("autozoom: " + gbAutoZoom)
-            break;
-    }
+//     switch(checkboxID) {
+//         case 'bing':
+//             gbBing = bChecked;
+//             console.log("bing: " + gbBing)
+//             break;
+//         case 'targomo':
+//             gbTargomo = bChecked;
+//             console.log("targomo: " + gbTargomo)
+//             break;
+//         case 'clickAutoZoom':
+//             gbAutoZoom = bChecked;
+//             console.log("autozoom: " + gbAutoZoom)
+//             break;
+//     }
 
-    if (!gbBing && !gbTargomo) {
-        displayTextMsg($("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
-    }
-}
+//     if (!gbBing && !gbTargomo) {
+//         displayTextMsg($("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
+//     }
+// }
 ////////////////////////////////////////////////////////////
 
 
