@@ -163,8 +163,8 @@ function processLatLng(map, latlng, name) {
                     } else { 
                         displayTextMsg($("#message-popup"), CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
                     }
-                    console.log("response =====")
-                    console.log(response)
+                    // console.log("response =====")
+                    // console.log(response)
                     calculateDemographics(response.lon, response.lat, map)
                 })  
                 
@@ -229,12 +229,32 @@ function calculateDemographics(lng, lat, map) {
             process_targomo(lng, lat, map);
             break;                 
         case 'here':
-            console.log("process here ===========")
+            process_here(lng, lat, map)
             break;
     }
 
 }
 ////////////////////////////////////////////////////////////
+
+function getColor(index) {
+    
+    var isoColor
+
+    switch (parseInt(index)) {
+        case 1:
+            isoColor = CONST_ISO_COLOR_1;
+            break;
+        case 2:
+            isoColor = CONST_ISO_COLOR_2;
+            break;
+        case 3:
+            isoColor = CONST_ISO_COLOR_3;
+            break;
+        default:
+            console.log("not found")
+    }
+    return isoColor
+}
 
 function process_bing(lng, lat, map) {
     // remove any existing isochrones
@@ -258,39 +278,57 @@ function process_bing(lng, lat, map) {
         // due to the asynchronous nature of the call, multiple ajax calls may not return in 
         // the order they were called
         //
-
         $.ajax({ 
             url:  "process_bing.json",
             type: "GET",
             data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
 
-            console.log("trace=====")
-            console.log(result)
-            console.log("------------")
-            console.log(result.coordinates)
-            console.log("===========")
-            
-            var coords = []
-
-            switch (parseInt(result['index'])) {
-                case 1:
-                    isoColor = CONST_ISO_COLOR_1;
-                    break;
-                case 2:
-                    isoColor = CONST_ISO_COLOR_2;
-                    break;
-                case 3:
-                    isoColor = CONST_ISO_COLOR_3;
-                    break;
-                default:
-                    console.log("not found")
-            }
+            var isoColor = getColor(result['index'])
 
             gIsochrones.push(L.polygon(result.coordinates[0], {color: isoColor}))
             gIsochrones[gIsochrones.length - 1].addTo(map)
             if (counter >=3 || counter <=4) map.fitBounds(gIsochrones[0].getBounds());
+        })
+        counter +=1
+    })
+}
 
+function process_here(lng, lat, map) {
+
+    // remove any existing isochrones
+    gIsochrones.map(function(isochrone) {
+        map.removeLayer(isochrone)
+    })
+    gIsochrones = []
+
+    // convert minutes into seconds
+    var time = []
+    var minutes = gsMinutes.split("-").map(function(str) {
+        time.push(parseInt(str) * 60)
+    })
+
+    var counter = 1
+    time.reverse().map(function(seconds) {
+        
+        //
+        // 'index' (integer value) is passed to the ajax call and the same value is returned
+        // this is to keep track of what color the polygon should have
+        // due to the asynchronous nature of the call, multiple ajax calls may not return in 
+        // the order they were called
+        //
+        console.log("tracing ----------")
+        $.ajax({ 
+            url:  "process_here.json",
+            type: "GET",
+            data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
+        }).done(function (result) {
+            console.log("tracing out ----------")
+            var isoColor = getColor(result['index'])
+
+            gIsochrones.push(L.polygon(result.coordinates[0], {color: isoColor}))
+            gIsochrones[gIsochrones.length - 1].addTo(map)
+            if (counter >=3 || counter <=4) map.fitBounds(gIsochrones[0].getBounds());
         })
         counter +=1
     })
@@ -330,25 +368,14 @@ function process_targomo(lng, lat, map) {
             var coords = []
             var numberIndicies = result.coordinates[0][0].length
 
+            // reverse lng,lat to lat,lng for leaflet
             for (var n = 0; n < numberIndicies; n++) {
                 lat = result.coordinates[0][0][n][1]
                 lng = result.coordinates[0][0][n][0]
                 coords.push({lat: lat, lng: lng})
             }
 
-            switch (parseInt(result['index'])) {
-                case 1:
-                    isoColor = CONST_ISO_COLOR_1;
-                    break;
-                case 2:
-                    isoColor = CONST_ISO_COLOR_2;
-                    break;
-                case 3:
-                    isoColor = CONST_ISO_COLOR_3;
-                    break;
-                default:
-                    console.log("not found")
-            }
+            var isoColor = getColor(result['index'])
 
             gIsochrones.push(L.polygon(coords, {color: isoColor}))
             gIsochrones[gIsochrones.length - 1].addTo(map)

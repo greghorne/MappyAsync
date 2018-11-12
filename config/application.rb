@@ -31,6 +31,8 @@ module Code
     # the framework and any gems in your application.
 
     config.targomo_key = ENV['RAILS_TARGOMO']
-    config.bing_key = ENV['RAILS_BING']
+    config.bing_key    = ENV['RAILS_BING']
+    config.here_id     = ENV["RAILS_HERE_ID"]
+    config.here_code   = ENV["RAILS_HERE_CODE"]
   end
 end

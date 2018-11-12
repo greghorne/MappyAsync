@@ -94,8 +94,8 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                     </center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                     <center><p>Drive-time polygon providers:</p></center>\
-                                    <center><label><input type='radio' name='iso' value='bing' checked> Bing Maps API</label></center>\
-                                    <center><label><input type='radio' name='iso' value='here'> HERE API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='bing'> Bing Maps API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='here' checked> HERE API</label></center>\
                                     <center><label><input type='radio' name='iso' value='targomo'> Targomo API</label></center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                     <center><label><input type='checkbox' id='clickAutoZoom' checked='true' onchange='isChecked(id, this.checked);'> Auto-zoom on map click</label></center>\

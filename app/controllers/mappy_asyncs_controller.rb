@@ -1,7 +1,5 @@
 require 'rest-client'
 
-targomo_key = ENV['RAILS_TARGOMO']
-
 class MappyAsyncsController < ApplicationController
 
     # def mapclick
@@ -17,12 +15,16 @@ class MappyAsyncsController < ApplicationController
     # end
 
     def process_bing
-puts ("process_bing =========")
         response = RestClient.get "http://zotac1.ddns.net:8002/v1/bing-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.bing_key
         render :json => JSON.parse(response)['bing'].chop() + ",\"index\": " + params['index'] + "}"
     end
 
     def process_here
+        puts "hello ================="
+        puts "http://192.168.1.240:8003/v1/here-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.here_id + "/" + Rails.application.config.here_code
+        # response = RestClient.get "http://192.168.1.240:8003/v1/here-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.here_id + "/" + Rails.application.config.here_code
+        # puts response
+        # render :json => JSON.parse(response)['here'].chop() + ",\"index\": " + params['index'] + "}"
         return
     end
 
