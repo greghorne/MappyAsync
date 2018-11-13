@@ -7,6 +7,7 @@ Scope:  Display a map and allow for the creation of isochrone (drive time) polyg
 Goals:  Create microservices to off load processing from the server.  Use asynchronous coding where possible.
 #
 The following are a list of APIs this project uses.  The APIs are granular and narrowly defined.
+    
     - https://github.com/greghorne/go-api-intersect-usa
     - https://github.com/greghorne/go-api-bing
     - https://github.com/greghorne/go-api-here
