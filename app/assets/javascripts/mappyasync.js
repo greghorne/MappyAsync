@@ -163,8 +163,6 @@ function processLatLng(map, latlng, name) {
                     } else { 
                         displayTextMsg($("#message-popup"), CONST_MESSAGE_UNABLE_TO_REVERSE_GEOCODE)
                     }
-                    // console.log("response =====")
-                    // console.log(response)
                     calculateDemographics(response.lon, response.lat, map)
                 })  
                 
@@ -200,26 +198,9 @@ function displayTextMsg(element, msg) {
 
 
 ////////////////////////////////////////////////////////////
-// function checkBoxChecked(map) {
-
-//     if (!gbBing && !gbTargomo) {    
-//         displayTextMsg($("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
-//         map.removeLayer(gMarker)
-
-//         if (!gSidebar.isVisible()) gSidebar.show()
-//         return false;
-//     }
-
-//     return true;
-// }
-////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////
 function calculateDemographics(lng, lat, map) {
 
     var strIsochroneType = document.querySelector('input[name=iso]:checked').value
-    console.log(strIsochroneType)
 
     switch(strIsochroneType) {
         case 'bing':
@@ -236,6 +217,8 @@ function calculateDemographics(lng, lat, map) {
 }
 ////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////
 function getColor(index) {
     
     var isoColor
@@ -250,12 +233,13 @@ function getColor(index) {
         case 3:
             isoColor = CONST_ISO_COLOR_3;
             break;
-        default:
-            console.log("not found")
     }
     return isoColor
 }
+////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////
 function process_bing(lng, lat, map) {
     // remove any existing isochrones
     gIsochrones.map(function(isochrone) {
@@ -293,7 +277,10 @@ function process_bing(lng, lat, map) {
         counter +=1
     })
 }
+////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////
 function process_here(lng, lat, map) {
 
     // remove any existing isochrones
@@ -318,14 +305,11 @@ function process_here(lng, lat, map) {
         // the order they were called
         //
 
-        console.log("js seconds: " + seconds)
         $.ajax({ 
             url:  "process_here.json",
             type: "GET",
             data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
-            console.log("js side in ----------")
-            // console.log(result)
 
             var isoColor = getColor(result['index'])
 
@@ -336,8 +320,10 @@ function process_here(lng, lat, map) {
         counter +=1
     })
 }
+////////////////////////////////////////////////////////////
 
 
+////////////////////////////////////////////////////////////
 function process_targomo(lng, lat, map) {
 
     // remove any existing isochrones
@@ -381,6 +367,7 @@ function process_targomo(lng, lat, map) {
         counter +=1
     })
 }
+////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////////
