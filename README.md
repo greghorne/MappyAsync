@@ -6,24 +6,24 @@ Scope:  Display a map and allow for the creation of isochrone (drive time) polyg
 #
 Goals:  Create microservices to off load processing from the server.  Use asynchronous coding where possible.
 #
-List of APIs that this app will use:
-- https://github.com/greghorne/go-api-intersect-usa
-- https://github.com/greghorne/go-api-bing
-- https://github.com/greghorne/go-api-here
-- https://github.com/greghorne/go-api-targomo
+The following are a list of APIs this project uses.  The APIs are granular and narrowly defined.
+    - https://github.com/greghorne/go-api-intersect-usa
+    - https://github.com/greghorne/go-api-bing
+    - https://github.com/greghorne/go-api-here
+    - https://github.com/greghorne/go-api-targomo
 
 #
 
 
 Tech Stack:
 
-	* Leaflet v1.3.3
+	- Leaflet v1.3.3
 
-    * Rails 5.2.0
-    * Ruby  2.5.1p57
+    - Rails 5.2.0
+    - Ruby  2.5.1p57
 
-    * PostgreSQL 9.4.15
-    * PostGIS    2.1.4 r12966
+    - PostgreSQL 9.4.15
+    - PostGIS    2.1.4 r12966
 
-    * Dev Machine - Vagrant Box:  Ubuntu 14.04.5 LTS x86
+    - Dev Machine - Vagrant Box:  Ubuntu 14.04.5 LTS x86
 
