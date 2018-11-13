@@ -29,4 +29,13 @@ class MappyAsyncsController < ApplicationController
         render :json => JSON.parse(response)['targomo'].chop() + ",\"index\": " + params['index'] + "}"
     end
 
+    def process_mapbox
+        # puts "mapbox trace ========"
+        # puts "http://192.168.1.240:8004/v1/mapbox-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.mapbox_token
+
+        response = RestClient.get "http://192.168.1.240:8004/v1/mapbox-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.mapbox_token
+        puts "{\"mapbox\":" + JSON.parse(response)['mapbox'] + ",\"index\": " + params['index'] + "}"
+        render :json => "{\"mapbox\":" + JSON.parse(response)['mapbox'] + ",\"index\": " + params['index'] + "}"
+    end
+
 end

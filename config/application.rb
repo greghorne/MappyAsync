@@ -30,9 +30,10 @@ module Code
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
-    config.targomo_key = ENV['RAILS_TARGOMO']
-    config.bing_key    = ENV['RAILS_BING']
-    config.here_id     = ENV["RAILS_HERE_ID"]
-    config.here_code   = ENV["RAILS_HERE_CODE"]
+    config.targomo_key  = ENV['RAILS_TARGOMO']
+    config.bing_key     = ENV['RAILS_BING']
+    config.here_id      = ENV["RAILS_HERE_ID"]
+    config.here_code    = ENV["RAILS_HERE_CODE"]
+    config.mapbox_token = ENV["RAILS_MAPBOX"]
   end
 end
