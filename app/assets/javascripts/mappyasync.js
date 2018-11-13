@@ -434,30 +434,11 @@ var gIsochrones = [];
 // handlers for controls on slideout panel
 function minutesOnChange(sValue) {
     gsMinutes = sValue
-    console.log("mintes: " + gsMinutes)
 }
 
-// function isChecked(checkboxID, bChecked) {
-
-//     switch(checkboxID) {
-//         case 'bing':
-//             gbBing = bChecked;
-//             console.log("bing: " + gbBing)
-//             break;
-//         case 'targomo':
-//             gbTargomo = bChecked;
-//             console.log("targomo: " + gbTargomo)
-//             break;
-//         case 'clickAutoZoom':
-//             gbAutoZoom = bChecked;
-//             console.log("autozoom: " + gbAutoZoom)
-//             break;
-//     }
-
-//     if (!gbBing && !gbTargomo) {
-//         displayTextMsg($("#message-popup"), CONST_MESSAGE_PROVIDER_CHECKBOX)
-//     }
-// }
+function isChecked(checkboxID, bChecked) {
+    gbAutoZoom = bChecked
+}
 ////////////////////////////////////////////////////////////
 
 
