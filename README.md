@@ -2,11 +2,15 @@
 
 *This Project is under development.*
 
-Scope:  Display a map with geospatial analytics.  Specifically use Bing and Tarmogo isochrone API's.
+Scope:  Display a map and allow for the creation of isochrone (drive time) polygons.  Specifically I will be using Bing Maps AI, HERE API and Targomo API services.
 #
-Goal:   Asynchronous coding wherever possible.
+Goals:  Create microservices where possible to off load processing.  Also use asynchronous coding where possible.
 #
-Comment: I don't think making everything asynchronous is necessarily the ideal implementation for this app.  However, I look forward to learning much more about asynchronous applications by working on this project.  I am not sure what pieces can be made asynchronous at this time other than the API calls.
+List of APIs that this app will use:
+- https://github.com/greghorne/go-api-intersect-usa
+- https://github.com/greghorne/go-api-bing
+-https://github.com/greghorne/go-api-here
+- https://github.com/greghorne/go-api-targomo
 
 #
 
