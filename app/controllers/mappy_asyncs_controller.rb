@@ -20,16 +20,12 @@ class MappyAsyncsController < ApplicationController
     end
 
     def process_here
-        response = RestClient.get "http://192.168.1.240:8003/v1/here-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.here_id + "/" + Rails.application.config.here_code
-        puts "{\"here\":" + JSON.parse(response)['here'] + ",\"index\": " + params['index'] + "}"
-        render :json => "{here:" + JSON.parse(response)['here'] + ",\"index\": " + params['index'] + "}"
-        # render :json => { name: "greg" }
-
+        response = RestClient.get "http://zotac1.ddns.net:8003/v1/here-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.here_id + "/" + Rails.application.config.here_code
+        render :json => "{\"here\":[" + JSON.parse(response)['here'] + "],\"index\": " + params['index'] + "}"
     end
 
     def process_targomo
         response = RestClient.get "http://zotac1.ddns.net:8001/v1/targomo-isochrone/" + params[:lng] + "/" + params[:lat] + "/" + params[:minutes] + "/" + Rails.application.config.targomo_key
-        puts JSON.parse(response)['targomo'].chop() + ",\"index\": " + params['index'] + "}"
         render :json => JSON.parse(response)['targomo'].chop() + ",\"index\": " + params['index'] + "}"
     end
 

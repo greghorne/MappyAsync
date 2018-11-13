@@ -318,19 +318,20 @@ function process_here(lng, lat, map) {
         // the order they were called
         //
 
+        console.log("js seconds: " + seconds)
         $.ajax({ 
             url:  "process_here.json",
             type: "GET",
             data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
             console.log("js side in ----------")
-            console.log(result)
-            console.log("js side out ----------")
-            // var isoColor = getColor(result['index'])
+            // console.log(result)
 
-            // gIsochrones.push(L.polygon(result.coordinates[0], {color: isoColor}))
-            // gIsochrones[gIsochrones.length - 1].addTo(map)
-            // if (counter >=3 || counter <=4) map.fitBounds(gIsochrones[0].getBounds());
+            var isoColor = getColor(result['index'])
+
+            gIsochrones.push(L.polygon(result.here, {color: isoColor}))
+            gIsochrones[gIsochrones.length - 1].addTo(map)
+            if (counter >=3 || counter <=4) map.fitBounds(gIsochrones[0].getBounds());
         })
         counter +=1
     })
