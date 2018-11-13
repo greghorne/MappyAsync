@@ -27,8 +27,8 @@ const CONST_MESSAGE_INVALID_XY_DISPLAY_TIME   = 3000;
 
 const CONST_INTERSECTS_USA_URL                = "http://zotac1.ddns.net:8000/v1/intersects-usa/";
 
-const CONST_ISO_COLOR_1 = "green";
-const CONST_ISO_COLOR_2 = "#F5F5B3";
+const CONST_ISO_COLOR_2 = "#D3A1C7";
+const CONST_ISO_COLOR_1 = "#C1C094";
 const CONST_ISO_COLOR_3 = "brown";
 
 // definition of map layers; first layer is the default layer displayed
@@ -78,11 +78,8 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                 <h3 style='color: #5e9ca0; text-align: left;'>What does it do?</h2>\
                                     <p>Click on the map or use the geocoding tool (magnifying glass icon) to place a marker on the map.</p>\
                                     <p>Isochrone (drive-time) polygons will be created based on setting below.</p>\
-                                </br>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
-                                <h3 style='color: #5e9ca0; text-align: center;'>Settings</hr>\
-                                <hr size='3' align='center' color='#5e9ca0'>\
-                                    <center><p>Drive time polygon (minutes):</p></center>\
+                                    <center>Drive time polygon (minutes):</center>\
                                     <center>\
                                         <select id=minutes name=minutes onchange='minutesOnChange(this.value);'>\
                                             <option value='1-2-3' selected=selected>1-2-3  minutes</option>\
@@ -93,10 +90,11 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                         </select>\
                                     </center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
-                                    <center><p>Drive-time polygon providers:</p></center>\
-                                    <center><label><input type='radio' name='iso' value='bing'> Bing Maps API</label></center>\
-                                    <center><label><input type='radio' name='iso' value='here' checked> HERE API</label></center>\
-                                    <center><label><input type='radio' name='iso' value='targomo'> Targomo API</label></center>\
+                                    <center>Drive-time polygon providers:</center>\
+                                    <center><label><input type='radio' name='iso' value='here'>HERE API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='targomo'>Targomo API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='bing'>Bing Maps API</label></center>\
+                                    <center><label><input type='radio' name='iso' value='mapbox' checked>Mapbox API</label></center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                     <center><label><input type='checkbox' id='clickAutoZoom' checked='true' onchange='isChecked(id, this.checked);'> Auto-zoom on map click</label></center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
