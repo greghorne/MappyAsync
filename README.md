@@ -26,5 +26,5 @@ Tech Stack:
     - PostgreSQL 9.4.15
     - PostGIS    2.1.4 r12966
 
-    - Dev Machine - Vagrant Box:  Ubuntu 14.04.5 LTS x86
+    - Dev Machine - Vagrant Box: Ubuntu 14.04.5 LTS x86
 
