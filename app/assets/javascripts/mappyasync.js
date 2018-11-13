@@ -261,12 +261,6 @@ function process_bing(lng, lat, map) {
     var counter = 1
     time.reverse().map(function(seconds) {
         
-        //
-        // 'index' (integer value) is passed to the ajax call and the same value is returned
-        // this is to keep track of what color the polygon should have
-        // due to the asynchronous nature of the call, multiple ajax calls may not return in 
-        // the order they were called
-        //
         $.ajax({ 
             url:  "process_bing.json",
             type: "GET",
@@ -301,24 +295,16 @@ function process_mapbox(lng, lat, map) {
 
     var counter = 1
     time.reverse().map(function(seconds) {
-        console.log("yoyo==========")
-        //
-        // 'index' (integer value) is passed to the ajax call and the same value is returned
-        // this is to keep track of what color the polygon should have
-        // due to the asynchronous nature of the call, multiple ajax calls may not return in 
-        // the order they were called
-        //
+
         $.ajax({ 
             url:  "process_mapbox.json",
             type: "GET",
             data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
 
-            console.log("======================")
-            console.log(result)
             var isoColor = getColor(result['index'])
 
-            gIsochrones.push(L.polygon(result.mapbox[0], {color: isoColor}))
+            gIsochrones.push(L.polygon(result.mapbox, {color: isoColor}))
             gIsochrones[gIsochrones.length - 1].addTo(map)
             if (counter >=3 || counter <=4) map.fitBounds(gIsochrones[0].getBounds());
         })
@@ -346,13 +332,6 @@ function process_here(lng, lat, map) {
     var counter = 1
     time.reverse().map(function(seconds) {
         
-        //
-        // 'index' (integer value) is passed to the ajax call and the same value is returned
-        // this is to keep track of what color the polygon should have
-        // due to the asynchronous nature of the call, multiple ajax calls may not return in 
-        // the order they were called
-        //
-
         $.ajax({ 
             url:  "process_here.json",
             type: "GET",
