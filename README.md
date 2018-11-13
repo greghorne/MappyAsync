@@ -6,7 +6,7 @@ Scope:  Display a map and allow for the creation of isochrone (drive time) polyg
 #
 Goals:  Create microservices to off load processing from the server.  Use asynchronous coding where possible.
 #
-The following are a list of APIs this project uses.  The APIs are granular and narrowly defined.
+The following are a list of APIs this project uses.  The APIs are granular and narrowly defined and are deployed on Raspberry Pi's.
     
     - https://github.com/greghorne/go-api-intersect-usa
     - https://github.com/greghorne/go-api-bing
@@ -26,5 +26,5 @@ Tech Stack:
     - PostgreSQL 9.4.15
     - PostGIS    2.1.4 r12966
 
-    - Dev Machine - Vagrant Box:  Ubuntu 14.04.5 LTS x86
+    - Dev Machine - Vagrant Box: Ubuntu 14.04.5 LTS x86
 
