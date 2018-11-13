@@ -76,8 +76,8 @@ const CONST_SLIDEOUT_DELAY_TIME = 500
 
 const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>MappyAsync</h1>\
                                 <h3 style='color: #5e9ca0; text-align: left;'>What does it do?</h2>\
-                                    <p>Given a polygon on the map, calculate demographics within the polygon.</p>\
-                                    <p>Allow for the creation of isochrones (drive-time polygons)</p>\
+                                    <p>Click on the map or use the geocoding tool (magnifying glass icon) to place a marker on the map.</p>\
+                                    <p>Isochrone (drive-time) polygons will be created based on setting below.</p>\
                                 </br>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                 <h3 style='color: #5e9ca0; text-align: center;'>Settings</hr>\
@@ -99,5 +99,8 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                     <center><label><input type='radio' name='iso' value='targomo'> Targomo API</label></center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                     <center><label><input type='checkbox' id='clickAutoZoom' checked='true' onchange='isChecked(id, this.checked);'> Auto-zoom on map click</label></center>\
+                                <hr size='3' align='center' color='#5e9ca0'>\
+                                    <center><label><input type='checkbox' id='clickCalculateDeographics' checked='true' onchange='isCalcDemoChecked(id, this.checked);'> Calculate Demographics</label></center>\
                                 <hr size='3' align='center' color='#5e9ca0'>";
+                                
 ////////////////////////////////////////////////////////////
