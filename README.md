@@ -29,4 +29,4 @@ Tech Stack:
     - Dev Machine - Vagrant Box: Ubuntu 14.04.5 LTS x86
 
 
-<img src="./mermaid-diagram.svg">
+<img src="./diagram.png">
