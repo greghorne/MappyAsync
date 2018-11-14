@@ -29,5 +29,4 @@ Tech Stack:
     - Dev Machine - Vagrant Box: Ubuntu 14.04.5 LTS x86
 
 
-<img src="./diagram.png">
-<img src="./diagram2.png">
+<img src="./diagram3.png">
