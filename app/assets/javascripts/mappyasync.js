@@ -264,12 +264,12 @@ function process_bing(lng, lat, map) {
         $.ajax({ 
             url:  "process_bing.json",
             type: "GET",
-            data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
+            data: { lng: lng, lat: lat, time: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
 
             var isoColor = getColor(result['index'])
 
-            gIsochrones.push(L.polygon(result.coordinates[0], {color: isoColor}))
+            gIsochrones.push(L.polygon(result.bing, {color: isoColor}))
             gIsochrones[gIsochrones.length - 1].addTo(map)
             if (counter >=3 || counter <=4) map.fitBounds(gIsochrones[0].getBounds());
         })
@@ -287,19 +287,18 @@ function process_mapbox(lng, lat, map) {
     })
     gIsochrones = []
 
-    // convert minutes into seconds
     var time = []
-    var minutes = gsMinutes.split("-").map(function(str) {
+    gsMinutes.split("-").map(function(str) {
         time.push(parseInt(str))
     })
 
     var counter = 1
-    time.reverse().map(function(seconds) {
+    time.reverse().map(function(minutes) {
 
         $.ajax({ 
             url:  "process_mapbox.json",
             type: "GET",
-            data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
+            data: { lng: lng, lat: lat, time: minutes, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
 
             var isoColor = getColor(result['index'])
@@ -335,7 +334,7 @@ function process_here(lng, lat, map) {
         $.ajax({ 
             url:  "process_here.json",
             type: "GET",
-            data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
+            data: { lng: lng, lat: lat, time: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
 
             var isoColor = getColor(result['index'])
@@ -367,26 +366,16 @@ function process_targomo(lng, lat, map) {
 
     var counter = 1
     time.reverse().map(function(seconds) {
-        
+
         $.ajax({ 
             url:  "process_targomo.json",
             type: "GET",
-            data: { lng: lng, lat: lat, minutes: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
+            data: { lng: lng, lat: lat, time: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
         }).done(function (result) {
-
-            var coords = []
-            var numberIndicies = result.coordinates[0][0].length
-
-            // reverse lng,lat to lat,lng for leaflet
-            for (var n = 0; n < numberIndicies; n++) {
-                lat = result.coordinates[0][0][n][1]
-                lng = result.coordinates[0][0][n][0]
-                coords.push({lat: lat, lng: lng})
-            }
 
             var isoColor = getColor(result['index'])
 
-            gIsochrones.push(L.polygon(coords, {color: isoColor}))
+            gIsochrones.push(L.polygon(result.targomo, {color: isoColor}))
             gIsochrones[gIsochrones.length - 1].addTo(map)
             if (counter >=3 || counter <=4) map.fitBounds(gIsochrones[0].getBounds());
 
