@@ -29,6 +29,6 @@ Tech Stack:
     - Dev Machine - Vagrant Box: Ubuntu 14.04.5 LTS x86
 
 #
-Layout Diagram:
+Layout: Orange Diamong represents users' browser
 
 <img src="./diagram6.png">
