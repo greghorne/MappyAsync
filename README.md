@@ -31,4 +31,4 @@ Tech Stack:
 #
 Layout Diagram:
 
-<img src="./diagram5.png">
+<img src="./diagram6.png">
