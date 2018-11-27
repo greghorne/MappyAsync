@@ -35,5 +35,6 @@ module Code
     config.here_id      = ENV["RAILS_HERE_ID"]
     config.here_code    = ENV["RAILS_HERE_CODE"]
     config.mapbox_token = ENV["RAILS_MAPBOX"]
+    config.api_server   = ENV["RAILS_API_SERVER"]
   end
 end
