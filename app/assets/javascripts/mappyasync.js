@@ -216,8 +216,11 @@ function calculateDemographics(lng, lat, map) {
             process_mapbox(lng, lat, map)
             break;
     }
+
+    // set global references
     gLng = lng;
     gLat = lat;
+    gMap = map;
 
 }
 ////////////////////////////////////////////////////////////
@@ -275,7 +278,7 @@ function process_bing(lng, lat, map) {
         $.ajax({ 
             url:  "process_bing.json",
             type: "GET",
-            data: { lng: lng, lat: lat, time: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
+            data: { lng: lng, lat: lat, time: seconds, index: counter }
         }).done(function (result) {
 
             var isoColor = getColor(result['index'])
@@ -310,7 +313,7 @@ function process_mapbox(lng, lat, map) {
         $.ajax({ 
             url:  "process_mapbox.json",
             type: "GET",
-            data: { lng: lng, lat: lat, time: minutes, bing: gbBing, targomo: gbTargomo, index: counter }
+            data: { lng: lng, lat: lat, time: minutes, index: counter }
         }).done(function (result) {
 
             var isoColor = getColor(result['index'])
@@ -347,7 +350,7 @@ function process_here(lng, lat, map) {
         $.ajax({ 
             url:  "process_here.json",
             type: "GET",
-            data: { lng: lng, lat: lat, time: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
+            data: { lng: lng, lat: lat, time: seconds, index: counter }
         }).done(function (result) {
 
             var isoColor = getColor(result['index'])
@@ -384,7 +387,7 @@ function process_targomo(lng, lat, map) {
         $.ajax({ 
             url:  "process_targomo.json",
             type: "GET",
-            data: { lng: lng, lat: lat, time: seconds, bing: gbBing, targomo: gbTargomo, index: counter }
+            data: { lng: lng, lat: lat, time: seconds, index: counter }
         }).done(function (result) {
 
             var isoColor = getColor(result['index'])
@@ -421,13 +424,14 @@ var gSidebar;
 var gSidebarHTML = CONST_SLIDEOUT_HTML;
 
 var gsMinutes;
-var gbBing;
-var gbTargomo;
+// var gbBing;
+// var gbTargomo;
 var gbAutoZoom;
 
 var gIsochrones = [];
 var gLng = 0;
 var gLat = 0;
+var gMap;
 
 ////////////////////////////////////////////////////////////////
 
@@ -453,6 +457,10 @@ var gLat = 0;
 // handlers for controls on slideout panel
 function minutesOnChange(sValue) {
     gsMinutes = sValue
+    if (gLng !== 0 && gLat !== 0) {
+        clearIsochrone(gMap);
+        calculateDemographics(gLng, gLat, gMap)
+    }
 }
 
 function isChecked(checkboxID, bChecked) {
@@ -490,22 +498,16 @@ $(document).ready(function() {
     /////////////////////////////////
     // initialize values
     gsMinutes  = $('#minutes').val()
-    gbBing     = $('#bing').is(":checked");
-    gbTargomo  = $('#targomo').is(":checked");
+    // gbBing     = $('#bing').is(":checked");
+    // gbTargomo  = $('#targomo').is(":checked");
     gbAutoZoom = $('#clickAutoZoom').is(":checked");
     /////////////////////////////////
 
     $('input[name="iso"]').on("change", function(e) {
-        console.log("=================")
-        console.log("iso type changes")
-        console.log(e)
-
         if (gLng !== 0 && gLat !== 0) {
             clearIsochrone(map);
             calculateDemographics(gLng, gLat, map)
         }
-
-        
     });
  
     iss(map);
