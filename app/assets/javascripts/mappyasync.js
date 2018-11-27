@@ -202,8 +202,6 @@ function calculateDemographics(lng, lat, map) {
 
     var strIsochroneType = document.querySelector('input[name=iso]:checked').value
 
-console.log(strIsochroneType)
-
     switch(strIsochroneType) {
         case 'bing':
             process_bing(lng, lat, map);
@@ -218,7 +216,19 @@ console.log(strIsochroneType)
             process_mapbox(lng, lat, map)
             break;
     }
+    gLng = lng;
+    gLat = lat;
 
+}
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
+function clearIsochrone(map) {
+    gIsochrones.map(function(isochrone) {
+        map.removeLayer(isochrone)
+    })
+    gIsochrones = []
 }
 ////////////////////////////////////////////////////////////
 
@@ -247,10 +257,11 @@ function getColor(index) {
 ////////////////////////////////////////////////////////////
 function process_bing(lng, lat, map) {
     // remove any existing isochrones
-    gIsochrones.map(function(isochrone) {
-        map.removeLayer(isochrone)
-    })
-    gIsochrones = []
+    // gIsochrones.map(function(isochrone) {
+    //     map.removeLayer(isochrone)
+    // })
+    // gIsochrones = []
+    clearIsochrone(map);
 
     // convert minutes into seconds
     var time = []
@@ -282,10 +293,11 @@ function process_bing(lng, lat, map) {
 ////////////////////////////////////////////////////////////
 function process_mapbox(lng, lat, map) {
     // remove any existing isochrones
-    gIsochrones.map(function(isochrone) {
-        map.removeLayer(isochrone)
-    })
-    gIsochrones = []
+    // gIsochrones.map(function(isochrone) {
+    //     map.removeLayer(isochrone)
+    // })
+    // gIsochrones = []
+    clearIsochrone(map);
 
     var time = []
     gsMinutes.split("-").map(function(str) {
@@ -317,10 +329,11 @@ function process_mapbox(lng, lat, map) {
 function process_here(lng, lat, map) {
 
     // remove any existing isochrones
-    gIsochrones.map(function(isochrone) {
-        map.removeLayer(isochrone)
-    })
-    gIsochrones = []
+    // gIsochrones.map(function(isochrone) {
+    //     map.removeLayer(isochrone)
+    // })
+    // gIsochrones = []
+    clearIsochrone(map);
 
     // convert minutes into seconds
     var time = []
@@ -353,10 +366,11 @@ function process_here(lng, lat, map) {
 function process_targomo(lng, lat, map) {
 
     // remove any existing isochrones
-    gIsochrones.map(function(isochrone) {
-        map.removeLayer(isochrone)
-    })
-    gIsochrones = []
+    // gIsochrones.map(function(isochrone) {
+    //     map.removeLayer(isochrone)
+    // })
+    // gIsochrones = []
+    clearIsochrone(map);
 
     // convert minutes into seconds
     var time = []
@@ -412,6 +426,8 @@ var gbTargomo;
 var gbAutoZoom;
 
 var gIsochrones = [];
+var gLng = 0;
+var gLat = 0;
 
 ////////////////////////////////////////////////////////////////
 
@@ -478,6 +494,19 @@ $(document).ready(function() {
     gbTargomo  = $('#targomo').is(":checked");
     gbAutoZoom = $('#clickAutoZoom').is(":checked");
     /////////////////////////////////
+
+    $('input[name="iso"]').on("change", function(e) {
+        console.log("=================")
+        console.log("iso type changes")
+        console.log(e)
+
+        if (gLng !== 0 && gLat !== 0) {
+            clearIsochrone(map);
+            calculateDemographics(gLng, gLat, map)
+        }
+
+        
+    });
  
     iss(map);
 })
