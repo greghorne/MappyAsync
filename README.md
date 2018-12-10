@@ -1,4 +1,4 @@
-# MappyAsync
+# MappyIso
 
 *This Project is under development.*
 
@@ -20,7 +20,7 @@ Tech Stack:
 
 	- Leaflet v1.3.3
 
-    - Rails 5.2.0
+    - Rails 5.2.1
     - Ruby  2.5.1p57
 
     - PostgreSQL 9.4.15
@@ -28,10 +28,10 @@ Tech Stack:
 
     - Dev Machine - Vagrant Box: Ubuntu 14.04.5 LTS x86
 
-    - Deployment Machine - Raspberry Pi 3 B+
+    - Deployment Machine - HypriotOS (debian) running on a Raspberry Pi 3 B+
       http://zotac1.ddns.net:3301
 
 #
 Layout:
 
-<img src="./diagram9.png">
+<img src="./diagram10.png">
