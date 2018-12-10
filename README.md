@@ -28,6 +28,8 @@ Tech Stack:
 
     - Dev Machine - Vagrant Box: Ubuntu 14.04.5 LTS x86
 
+    - Deployment Machine - Raspberry Pi 3 B+
+
 #
 Layout:
 
