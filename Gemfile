@@ -42,6 +42,7 @@ gem 'json'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'rest-client'
+gem 'rdoc'
 
 # gem 'jquery-rails'
 # gem 'jquery-ui-rails'
