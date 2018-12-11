@@ -43,6 +43,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'rest-client'
 gem 'rdoc'
+gem 'tzinfo-data'
 
 # gem 'jquery-rails'
 # gem 'jquery-ui-rails'
