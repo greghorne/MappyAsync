@@ -27,8 +27,8 @@ const CONST_MESSAGE_INVALID_XY_DISPLAY_TIME   = 3000;
 
 const CONST_INTERSECTS_USA_URL                = "http://zotac1.ddns.net:8000/v1/intersects-usa/";
 
-const CONST_ISO_COLOR_2 = "#D3A1C7";
-const CONST_ISO_COLOR_1 = "#C1C094";
+const CONST_ISO_COLOR_1 = "#00FA9A";
+const CONST_ISO_COLOR_2 = "#FFFF00";
 const CONST_ISO_COLOR_3 = "brown";
 
 // definition of map layers; first layer is the default layer displayed
