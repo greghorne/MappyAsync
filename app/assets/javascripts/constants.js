@@ -97,8 +97,6 @@ const CONST_SLIDEOUT_HTML =    "<h1 style='color: #5e9ca0; text-align: center;'>
                                     <center><label><input type='radio' name='iso' value='mapbox'>Mapbox API</label></center>\
                                 <hr size='3' align='center' color='#5e9ca0'>\
                                     <center><label><input type='checkbox' id='clickAutoZoom' checked='true' onchange='isChecked(id, this.checked);'> Auto-zoom on map click</label></center>\
-                                <hr size='3' align='center' color='#5e9ca0'>\
-                                    <center><label><input type='checkbox' id='clickCalculateDeographics' checked='true' onchange='isCalcDemoChecked(id, this.checked);'> Calculate Demographics</label></center>\
                                 <hr size='3' align='center' color='#5e9ca0'>";
                                 
 ////////////////////////////////////////////////////////////
